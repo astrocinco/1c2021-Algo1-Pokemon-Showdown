@@ -10,7 +10,7 @@ def main():
         if not ev:
             break
 
-        if ev.type == pokemon.gamelib.EventType.KeyPress and ev.key == 'Escape':      
+        if ev.type == showdown.gamelib.EventType.KeyPress and ev.key == 'Escape':      
             break
 
         if ev.type == showdown.gamelib.EventType.ButtonPress:
