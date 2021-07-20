@@ -1,8 +1,9 @@
 import showdown
 
 def main():
-    juego = 'primer menu'
     showdown.gamelib.resize(showdown.ANCHO_VENTANA, showdown.ALTO_VENTANA)
+    juego = 'menu_principio'
+    showdown.menu_principio()
 
     while showdown.gamelib.is_alive():
         ev = showdown.gamelib.wait()
