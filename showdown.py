@@ -141,7 +141,6 @@ def navegacion(x, y, juego):
 
     if juego == 'menu_archivos':
         botones_seleccion_archivos(x, y)
-        #return menu_archivos(juego[1], juego[2], juego[3], juego[4])
         return menu_archivos()
 
     if juego == 'error':
