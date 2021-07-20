@@ -18,4 +18,4 @@ def main():
             x, y = ev.x, ev.y
             juego = showdown.navegacion(x, y, juego)
 
-showdown.gamelib.init(main)
+showdown.gamelib.init(main) 

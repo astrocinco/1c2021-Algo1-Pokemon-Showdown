@@ -129,7 +129,7 @@ def botones_seleccion_archivos(x, y):
         if not EQUIPO1 == '' and not EQUIPO2 == '':
             batalla.logica(EQUIPO1, EQUIPO2)
         else:
-            gamelib.say('No se eligieron dos equipos aún.')
+            gamelib.say('No se eligieron dos equipos aún.') 
 
 
 def navegacion(x, y, juego):
