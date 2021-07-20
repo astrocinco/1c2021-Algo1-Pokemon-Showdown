@@ -2,35 +2,57 @@ import gamelib
 
 ANCHO_VENTANA = 900
 ALTO_VENTANA = 600
+menu_memorizado = 'primer menu'
 
-#BOTON_PRIMERO = 
+MITAD_X = ANCHO_VENTANA // 2
+MITAD_Y = ALTO_VENTANA // 2
+VACIO = 0
+FRANJA_AZUL_Y = 88
+COLOR_AZUL = '#0d1364'
+TITULO_Y = 70
+BOTON_X = 120
+BOTON_Y = 25
+BOTON_PRIMERMENU_X1, BOTON_PRIMERMENU_Y1, BOTON_PRIMERMENU_X2, BOTON_PRIMERMENU_Y2 = MITAD_X - BOTON_X, MITAD_Y - BOTON_Y, MITAD_X + BOTON_X, MITAD_Y + BOTON_Y #POSICION BOTON CENTRAL PRIMER MENU
 
 
-def primer_menu():
+def menu_principio():
     """
     Dibuja el menú principal.
     """
-    CREDITOS_X, CREDITOS_Y = ANCHO_VENTANA // 2, ALTO_VENTANA - 2 * TITLE_Y // 3  # POSICIÓN CREDITOS
-    BOTON_IZQ_X1, BOTON_IZQ_Y1, BOTON_IZQ_X2, BOTON_IZQ_Y2 = MARGEN_ENTRE_BOTONES, BOTON_Y1, ANCHO_VENTANA // 2 - ESPACIO_ENTRE_BOTONES, BOTON_Y2
-    BOTON_DER_X1, BOTON_DER_Y1, BOTON_DER_X2, BOTON_DER_Y2 = ANCHO_VENTANA // 2 + ESPACIO_ENTRE_BOTONES, BOTON_Y1, ANCHO_VENTANA - MARGEN_ENTRE_BOTONES, BOTON_Y2
-    TEXTO_IZQ_X, TEXTO_IZQ_Y = MARGEN_ENTRE_BOTONES * 2, ALTO_VENTANA // 2 - 5 * ALTO_BOTONES // 6
-    TEXTO_DER_X, TEXTO_DER_Y = ANCHO_VENTANA // 2 + 2 * ESPACIO_ENTRE_BOTONES + MARGEN_ENTRE_BOTONES, ALTO_VENTANA // 2 - 5 * ALTO_BOTONES // 6
+    CREDITOS_X, CREDITOS_Y = ANCHO_VENTANA // 2, ALTO_VENTANA - 2 * TITULO_Y // 3  # POSICIÓN CREDITOS
+    TEXTO_CENTRO_X, TEXTO_CENTRO_Y = MITAD_X, MITAD_Y
 
     gamelib.draw_begin()
     gamelib.draw_rectangle(VACIO, VACIO, ANCHO_VENTANA, ALTO_VENTANA)  # FONDO BLANCO
-    gamelib.draw_rectangle(VACIO, VACIO, ANCHO_VENTANA, FRANJA_AZUL_Y, fill='#0d1364')  # FRANJA SUPERIOR AZUL
-    gamelib.draw_rectangle(VACIO, ALTO_VENTANA - FRANJA_AZUL_Y, ANCHO_VENTANA, ALTO_VENTANA, fill='#0d1364')  # FRANJA INFERIOR AZUL
-    gamelib.draw_rectangle(BOTON_IZQ_X1, BOTON_IZQ_Y1, BOTON_IZQ_X2, BOTON_IZQ_Y2)  # BOTÓN TITULO "POKEMONES"
-    gamelib.draw_rectangle(BOTON_DER_X1, BOTON_DER_Y1, BOTON_DER_X2, BOTON_DER_Y2)  # BOTÓN TITULO "EQUIPOS"
-    gamelib.draw_text('POKEDEX', ANCHO_VENTANA // 2, TITLE_Y, fill='white', size=30, anchor='s')  # TITULO
+    gamelib.draw_rectangle(VACIO, VACIO, ANCHO_VENTANA, FRANJA_AZUL_Y, fill=COLOR_AZUL)  # FRANJA SUPERIOR AZUL
+    gamelib.draw_rectangle(VACIO, ALTO_VENTANA - FRANJA_AZUL_Y, ANCHO_VENTANA, ALTO_VENTANA, fill=COLOR_AZUL)  # FRANJA INFERIOR AZUL
+    gamelib.draw_rectangle(BOTON_PRIMERMENU_X1, BOTON_PRIMERMENU_Y1, BOTON_PRIMERMENU_X2, BOTON_PRIMERMENU_Y2)  # BOTÓN TITULO "POKEMONES"
+    gamelib.draw_text('POKEMON SHOWDOWN', MITAD_X, TITULO_Y, fill='white', size=30, anchor='s')  # TITULO
     gamelib.draw_text('De Ditto, Arean y Langer', CREDITOS_X, CREDITOS_Y, fill='white', size=10, anchor='n')  # CREDITOS
-    gamelib.draw_text('POKEMONES', TEXTO_IZQ_X, TEXTO_IZQ_Y, fill='black', size=25, anchor='nw')  # TEXTO "POKEMONES"
-    gamelib.draw_text('EQUIPOS', TEXTO_DER_X, TEXTO_DER_Y, fill='black', size=25, anchor='nw')  # TEXTO "EQUIPOS"
+    gamelib.draw_text('COMENZAR', TEXTO_CENTRO_X, TEXTO_CENTRO_Y, fill='black', size=25, anchor='c')  # TEXTO "POKEMONES"
     gamelib.draw_end()
 
-    return 'primer menu'
+    global menu_memorizado
+    menu_memorizado = 'menu_principio'
+    return menu_memorizado
+
+
+def error():
+    gamelib.draw_begin()
+    gamelib.draw_text('lol no', MITAD_X, MITAD_Y, fill='red', size=30, anchor='s')  # TITULO
+    gamelib.draw_end()
+
+    global menu_memorizado
+    menu_memorizado = 'error'
+    return menu_memorizado
 
 
 def navegacion(x, y, juego):
-    if juego == 'primer menu':
-        primer_menu()
+    if juego == 'menu_principio':
+        if BOTON_PRIMERMENU_X1 < x <  BOTON_PRIMERMENU_X2  and BOTON_PRIMERMENU_Y1 < y < BOTON_PRIMERMENU_Y2:
+            return menu_principio()
+
+    if juego == 'error':
+        return error()
+
+    return error()
