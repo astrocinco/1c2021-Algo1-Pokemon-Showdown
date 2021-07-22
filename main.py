@@ -1,21 +1,21 @@
-import showdown
+import prebatalla
 
 def main():
-    showdown.gamelib.resize(showdown.ANCHO_VENTANA, showdown.ALTO_VENTANA)
+    prebatalla.gamelib.resize(prebatalla.ANCHO_VENTANA, prebatalla.ALTO_VENTANA)
     juego = 'menu_principio'
-    showdown.menu_principio()
+    prebatalla.menu_principio()
 
-    while showdown.gamelib.is_alive():
-        ev = showdown.gamelib.wait()
+    while prebatalla.gamelib.is_alive():
+        ev = prebatalla.gamelib.wait()
 
         if not ev:
             break
 
-        if ev.type == showdown.gamelib.EventType.KeyPress and ev.key == 'Escape':      
+        if ev.type == prebatalla.gamelib.EventType.KeyPress and ev.key == 'Escape':      
             break
 
-        if ev.type == showdown.gamelib.EventType.ButtonPress:
+        if ev.type == prebatalla.gamelib.EventType.ButtonPress:
             x, y = ev.x, ev.y
-            juego = showdown.navegacion(x, y, juego)
+            juego = prebatalla.navegacion(x, y, juego)
 
-showdown.gamelib.init(main) 
+prebatalla.gamelib.init(main) 
