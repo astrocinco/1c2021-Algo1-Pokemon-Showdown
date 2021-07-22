@@ -101,7 +101,7 @@ def recibir_archivo_jugador_1():
 
 
 def recibir_archivo_jugador_2():
-    print('100')
+    print('101')
 
 
 def recibir_equipo_jugador_1():
