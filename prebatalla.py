@@ -1,8 +1,8 @@
 import gamelib
 import batalla
 
-ANCHO_VENTANA = 900
-ALTO_VENTANA = 600
+ANCHO_VENTANA = batalla.ANCHO_VENTANA
+ALTO_VENTANA = batalla.ALTO_VENTANA
 MENU_MEMORIZADO = 'primer menu'
 ARCHIVO1 = ''
 ARCHIVO2 = ''

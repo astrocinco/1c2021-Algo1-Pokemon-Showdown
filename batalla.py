@@ -1,5 +1,7 @@
 import lectores
 import gamelib
+ANCHO_VENTANA = 900
+ALTO_VENTANA = 600
 
 archivo_pokemones = 'pokemons.csv'
 
@@ -67,6 +69,14 @@ def calculadora_efecto():
 
 def calculadora_sanacion():
     pass
+
+
+def dibujar_combate():
+    gamelib.draw_begin()
+    gamelib.draw_rectangle(VACIO, VACIO, ANCHO_VENTANA, ALTO_VENTANA)  # FONDO BLANCO
+    gamelib.draw_rectangle(VACIO, VACIO, ANCHO_VENTANA, FRANJA_AZUL_Y, fill=COLOR_AZUL)  # FRANJA SUPERIOR AZUL
+    gamelib.draw_rectangle(VACIO, ALTO_VENTANA - FRANJA_AZUL_Y, ANCHO_VENTANA, ALTO_VENTANA, fill=COLOR_AZUL)  # FRANJA INFERIOR AZUL
+    gamelib.draw_text((f'Equipo {} vs Equipo {}'nombre_1, nombre_2), MITAD_X, TITULO_Y, fill='white', size=30, anchor='s')  # TITULO
 
 
 def un_turno(combatiente1, combatiente2, equipo1, equipo2):
