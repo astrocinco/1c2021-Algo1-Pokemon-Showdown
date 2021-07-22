@@ -127,7 +127,7 @@ def botones_seleccion_archivos(x, y):
         recibir_equipo_jugador_2()
     elif SHOW_X1 < x < SHOW_X2 and SHOW_Y1 < y < SHOW_Y2:
         if not EQUIPO1 == '' and not EQUIPO2 == '':
-            batalla.logica(EQUIPO1, EQUIPO2)
+            batalla.desarrollo_combate(EQUIPO1, EQUIPO2)  # AQUI LLAMA AL PROXIMO ARCHIVO UNA VEZ TIENE DOS EQUIPOS
         else:
             gamelib.say('No se eligieron dos equipos aún.') 
 
