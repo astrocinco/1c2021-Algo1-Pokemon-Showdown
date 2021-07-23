@@ -4,7 +4,7 @@ ANCHO_VENTANA = 900
 ALTO_VENTANA = 600
 
 archivo_pokemones = 'pokemons.csv'
-
+print ('7')
 class Combatiente:
     def __init__(self, numero, archivo):
         stats = lectores.lector_por_numero(numero, archivo_pokemones)
@@ -72,15 +72,37 @@ def calculadora_sanacion():
 
 
 def dibujar_combate():
-    gamelib.draw_begin()
-    gamelib.draw_rectangle(VACIO, VACIO, ANCHO_VENTANA, ALTO_VENTANA)  # FONDO BLANCO
-    gamelib.draw_rectangle(VACIO, VACIO, ANCHO_VENTANA, FRANJA_AZUL_Y, fill=COLOR_AZUL)  # FRANJA SUPERIOR AZUL
-    gamelib.draw_rectangle(VACIO, ALTO_VENTANA - FRANJA_AZUL_Y, ANCHO_VENTANA, ALTO_VENTANA, fill=COLOR_AZUL)  # FRANJA INFERIOR AZUL
-    gamelib.draw_text((f'Equipo {} vs Equipo {}'nombre_1, nombre_2), MITAD_X, TITULO_Y, fill='white', size=30, anchor='s')  # TITULO
+    VACIO = 0
+    FRANJA_AZUL_Y = 88
+    TITULO_Y = 70
+    COLOR_AZUL = '#0d1364'
+    MITAD_X = ANCHO_VENTANA // 2
+    nombre_1 = 'Rocket'
+    nombre_2 = 'Ash'
+    print ('Hola')
+
+    while gamelib.is_alive(): # probablemente esté mal hacer una instancia nueva de gamelib acá. Despues lo estudiamos
+        ev = gamelib.wait()
+
+        if not ev:
+            break
+
+        if ev.type == gamelib.EventType.KeyPress and ev.key == 'Escape':      
+            break
+
+        gamelib.resize(ANCHO_VENTANA, ALTO_VENTANA)
+
+        gamelib.draw_begin()
+        gamelib.draw_rectangle(VACIO, VACIO, ANCHO_VENTANA, ALTO_VENTANA)  # FONDO BLANCO
+        gamelib.draw_rectangle(VACIO, VACIO, ANCHO_VENTANA, FRANJA_AZUL_Y, fill=COLOR_AZUL)  # FRANJA SUPERIOR AZUL
+        #gamelib.draw_rectangle(VACIO, ALTO_VENTANA - FRANJA_AZUL_Y, ANCHO_VENTANA, ALTO_VENTANA, fill=COLOR_AZUL)  # FRANJA INFERIOR AZUL
+        gamelib.draw_text('Equipo {} vs Equipo {}'.format(nombre_1, nombre_2), MITAD_X, TITULO_Y, fill='white', size=30, anchor='s')  # TITULO
+        gamelib.draw_end()
 
 
 def un_turno(combatiente1, combatiente2, equipo1, equipo2):
-    #draw estado actual del juego
+    print ('si')
+    gamelib.init(dibujar_combate) 
     movimiento_jug_1 = jugador_elige_movimiento(equipo1, combatiente1.informacion[0])
     movimiento_jug_2 = jugador_elige_movimiento(equipo2, combatiente2.informacion[0])
 
@@ -115,3 +137,6 @@ def desarrollo_combate(equipo1, equipo2):
 
     elif len(equipo2) == 0:
         gamelib.say('Felicidades, ganó el jugador 1!')
+
+print('129')
+un_turno('', '', '', '')
