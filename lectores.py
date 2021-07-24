@@ -19,5 +19,3 @@ def lector_por_numero(nro, nombre_archivo):
 
 def movimiento_en_pokemon(numero, archivo):
     return 1 # HACER
-
-print (lector_por_numero(37, 'equipos.csv'))
