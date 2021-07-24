@@ -1,3 +1,4 @@
+from tkinter.constants import ARC
 import gamelib
 import batalla
 import lectores
@@ -7,8 +8,8 @@ ALTO_VENTANA = batalla.ALTO_VENTANA
 MENU_MEMORIZADO = 'primer menu'
 ARCHIVO1 = ''
 ARCHIVO2 = ''
-EQUIPO1 = ''
-EQUIPO2 = ''
+EQUIPO1 = ['', '']
+EQUIPO2 = ['', '']
 
 MITAD_X = ANCHO_VENTANA // 2
 MITAD_Y = ALTO_VENTANA // 2
@@ -76,8 +77,8 @@ def menu_archivos():
     gamelib.draw_text('¡SHOWDOWN!', MITAD_X - BOTON_X, BOTON_FIN_ARCHIVOS_Y - BOTON_Y, fill='black', size=25, anchor='nw')  # TEXTO "¡SHOWDOWN!"
     gamelib.draw_text(('Archivo de J1: ' + ARCHIVO1), BA1X1, TEXTO_ARCHIVOS_Y - BOTON_Y, fill='black', size=25, anchor='nw') 
     gamelib.draw_text(('Archivo de J2: ' + ARCHIVO2), BA2X1, TEXTO_ARCHIVOS_Y - BOTON_Y, fill='black', size=25, anchor='nw')  
-    gamelib.draw_text(('Equipo de J1: ' + EQUIPO1), BE1X1, TEXTO_EQUIPOS_Y - BOTON_Y, fill='black', size=25, anchor='nw') 
-    gamelib.draw_text(('Equipo de J2: ' + EQUIPO2), BE2X1, TEXTO_EQUIPOS_Y - BOTON_Y, fill='black', size=25, anchor='nw')  
+    #gamelib.draw_text(('Equipo de J1: ' + EQUIPO1[1]), BE1X1, TEXTO_EQUIPOS_Y - BOTON_Y, fill='black', size=25, anchor='nw') 
+    #gamelib.draw_text(('Equipo de J2: ' + EQUIPO2[1]), BE2X1, TEXTO_EQUIPOS_Y - BOTON_Y, fill='black', size=25, anchor='nw')  
     gamelib.draw_end()
 
     global MENU_MEMORIZADO
@@ -100,13 +101,14 @@ def recibir_archivo_jugador_1():
     try:
         with open(equipos_del_jugador1, "r") as equipos1:
             lector_equipo1 = lectores.csv.reader(equipos1)
+            global ARCHIVO1
+            ARCHIVO1 = equipos_del_jugador1
+            print (ARCHIVO1)    
             
     except:
         gamelib.say("no se encuentra archvo de equipos del jugador 1")
 
-        global ARCHIVO1
         ARCHIVO1 = equipos_del_jugador1
-        print (ARCHIVO1)
     return equipos_del_jugador1
 
 def recibir_archivo_jugador_2():
@@ -115,30 +117,41 @@ def recibir_archivo_jugador_2():
     try:
         with open(equipos_del_jugador2, "r") as equipos2:
             lector_equipo2 = lectores.csv.reader(equipos2)
+            global ARCHIVO2
+            ARCHIVO2 = equipos_del_jugador2
+            print (ARCHIVO2)
             
     except:
         gamelib.say("no se encuentra archvo de equipos del jugador 2")
 
-        global ARCHIVO2
-        ARCHIVO2 = equipos_del_jugador2
-        print (ARCHIVO2)
     return equipos_del_jugador2
 
 
 def recibir_equipo_jugador_1():#equipos_del_jugador1):
-    lector_equipo_elegido1 = gamelib.input("Ingrese el numero de equipo con el que va a jugar")
-    while not lector_equipo_elegido1.isdigit():
-        lector_equipo_elegido1 = gamelib.input("No ingreso un numero. Ingrese el numero de equipo con el que va a jugar")
+    try:
+        lector_equipo_elegido1 = gamelib.input("Ingrese el numero de equipo con el que va a jugar")
+        while not lector_equipo_elegido1.isdigit():
+            lector_equipo_elegido1 = gamelib.input("No ingreso un numero. Ingrese el numero de equipo con el que va a jugar")
+        print(lector_equipo_elegido1)
+
+    except:
+        gamelib.say("No ingreso un equipo valido")
     global EQUIPO1
-    EQUIPO1 = lectores.lector_por_numero(lector_equipo_elegido1, EQUIPO1)
+    EQUIPO1 = lectores.lector_por_numero(lector_equipo_elegido1, ARCHIVO1)
     return EQUIPO1
     
 def recibir_equipo_jugador_2():#equipos_del_jugador2):
-    lector_equipo_elegido2 = gamelib.input("Ingrese el numero de equipo con el que va a jugar")
-    while not lector_equipo_elegido2.isdigit():
-        lector_equipo_elegido2 = gamelib.input("No ingreso un numero. Ingrese el numero de equipo con el que va a jugar")
+    try:
+        lector_equipo_elegido2 = gamelib.input("Ingrese el numero de equipo con el que va a jugar")
+        while not lector_equipo_elegido2.isdigit():
+            lector_equipo_elegido2 = gamelib.input("No ingreso un numero. Ingrese el numero de equipo con el que va a jugar")
+        print(lector_equipo_elegido2)
+    
+    except:
+        gamelib.say("No ingreso un equipo valido")
+    
     global EQUIPO2
-    EQUIPO2 = lectores.lector_por_numero(lector_equipo_elegido2, EQUIPO2)
+    EQUIPO2 = lectores.lector_por_numero(lector_equipo_elegido2, ARCHIVO2)
     return EQUIPO2
 
 

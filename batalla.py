@@ -112,6 +112,7 @@ def un_turno(combatiente1, combatiente2, equipo1, equipo2):
 
 
 def desarrollo_combate(equipo1, equipo2):
+    print('holis estoy en la 115 de batalla')
     """
     Recibe las dos listas de equipos que eligieron los usuarios en prebatalla.py
     y desarrolla el combate. Termina cuando uno de los dos equipos se queda sin pokemones vivos
