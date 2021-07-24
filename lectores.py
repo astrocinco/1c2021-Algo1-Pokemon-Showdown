@@ -17,5 +17,17 @@ def lector_por_numero(nro, nombre_archivo):
                 return leido[:-1].split(';')
 
 
+def extraer_integrantes_equipo(equipo):
+    resultado = []
+
+    resultado.append(equipo[2])
+    resultado.append(equipo[4])
+    resultado.append(equipo[6])
+    #resultado.append(equipo[8])
+    #resultado.append(equipo[10])
+    #resultado.append(equipo[12]) # REHACER PARA CUALQUIER TAMAÑO DE EQUIPO
+    return resultado
+
+
 def movimiento_en_pokemon(numero, archivo):
     return 1 # HACER

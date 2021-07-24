@@ -5,7 +5,9 @@ ANCHO_VENTANA = 900
 ALTO_VENTANA = 600
 
 archivo_pokemones = 'pokemons.csv'
-print ('7')
+archivo_detalle_movimientos = 'detalle_movimientos.csv'
+archivo_tabla_tipos = 'tabla_tipos.csv'
+
 class Combatiente:
     def __init__(self, numero, archivo):
         stats = lectores.lector_por_numero(numero, archivo_pokemones)
@@ -49,7 +51,7 @@ def jugador_elige_pokemon(lista):
     Recibe una lista de todo el equipo que puede elegir el usuario
     y retorna uno de ellos
     """
-    return 1 # HACER
+    return 14 # HACER
 
 
 def jugador_elige_movimiento(lista, numero):
@@ -57,69 +59,72 @@ def jugador_elige_movimiento(lista, numero):
     Recibe una lista de todo el equipo y un numero de pokemon
     y retorna el movimiento que elegió el usuario para ese pokemon
     """
-    return 1 # HACER
+    return 'fly' # HACER
 
 
 def calculadora_daño():
+    """
+    Hace todos los calculos de daño, retorna el numero de daño hecho.
+    """
     pass
 
 
 def calculadora_efecto():
+    """
+    Hace todos los calculos de stat boost, retorna los efectos.
+    """
     pass
 
 
 def calculadora_sanacion():
+    """
+    Al ser llamada, calcula cuánto debe ser sanado un pokemon.
+    """
     pass
 
 
-def dibujar_combate():
+def dibujar_combate(nombre_1, nombre_2):
+    """
+    Dibuja el estado del combate al principio del turno, para que los usuarios puedan elegir que hacer a continuación según
+    cómo ven que están sus pokemones en juego.
+    """
     VACIO = 0
     FRANJA_AZUL_Y = 88
     TITULO_Y = 70
     COLOR_AZUL = '#0d1364'
     MITAD_X = ANCHO_VENTANA // 2
-    nombre_1 = 'Rocket'
-    nombre_2 = 'Ash'
-    print ('Hola')
 
-    while gamelib.is_alive(): # probablemente esté mal hacer una instancia nueva de gamelib acá. Despues lo estudiamos
-        ev = gamelib.wait()
-
-        if not ev:
-            break
-
-        if ev.type == gamelib.EventType.KeyPress and ev.key == 'Escape':      
-            break
-
-        gamelib.resize(ANCHO_VENTANA, ALTO_VENTANA)
-
-        gamelib.draw_begin()
-        gamelib.draw_rectangle(VACIO, VACIO, ANCHO_VENTANA, ALTO_VENTANA)  # FONDO BLANCO
-        gamelib.draw_rectangle(VACIO, VACIO, ANCHO_VENTANA, FRANJA_AZUL_Y, fill=COLOR_AZUL)  # FRANJA SUPERIOR AZUL
-        #gamelib.draw_rectangle(VACIO, ALTO_VENTANA - FRANJA_AZUL_Y, ANCHO_VENTANA, ALTO_VENTANA, fill=COLOR_AZUL)  # FRANJA INFERIOR AZUL
-        gamelib.draw_text('Equipo {} vs Equipo {}'.format(nombre_1, nombre_2), MITAD_X, TITULO_Y, fill='white', size=30, anchor='s')  # TITULO
-        gamelib.draw_end()
+    gamelib.draw_begin()
+    gamelib.draw_rectangle(VACIO, VACIO, ANCHO_VENTANA, ALTO_VENTANA)  # FONDO BLANCO
+    gamelib.draw_rectangle(VACIO, VACIO, ANCHO_VENTANA, FRANJA_AZUL_Y, fill=COLOR_AZUL)  # FRANJA SUPERIOR AZUL
+    gamelib.draw_text('Equipo {} vs Equipo {}'.format(nombre_1, nombre_2), MITAD_X, TITULO_Y, fill='white', size=30, anchor='s')  # TITULO
+    #  SEGUIR
+    gamelib.draw_end()
 
 
 def un_turno(combatiente1, combatiente2, equipo1, equipo2):
-    print ('si')
-    #gamelib.init(dibujar_combate) 
-    #movimiento_jug_1 = jugador_elige_movimiento(equipo1, combatiente1.informacion[0])
-    #movimiento_jug_2 = jugador_elige_movimiento(equipo2, combatiente2.informacion[0])
+    """
+    Desarrolla un turno. Llama a dibujar el estado actual del combate, luego permite a los usuarios elegir sus movimientos.
+    Calcula quien mueve primero y luego llama a las funciones calculadoras de daño, efecto y sanacion.
+    """
+    dibujar_combate(equipo1, equipo2)
+    movimiento_jug_1 = jugador_elige_movimiento(equipo1, combatiente1.informacion[0])
+    movimiento_jug_2 = jugador_elige_movimiento(equipo2, combatiente2.informacion[0])
+    # SEGUIR. 
+    # Quien mueve primero? Calcular efecto movimiento del primero. Afectar al otro. Calcular efecto segundo movimiento. Afectar al primero.
 
-    # HACER. Quien mueve primero? Calcular efecto movimiento del primero. Afectar al otro. Calcular efecto segundo movimiento. Afectar al primero.
-
-    #draw como quedaron despues del combate (van a tener menos hp o se va a ver como uno murió)
+    pass
 
 
 def desarrollo_combate(equipo1, equipo2):
-    print('holis estoy en la 115 de batalla')
     """
     Recibe las dos listas de equipos que eligieron los usuarios en prebatalla.py
     y desarrolla el combate. Termina cuando uno de los dos equipos se queda sin pokemones vivos
     """
-    eleccion1 = jugador_elige_pokemon(equipo1)
-    eleccion2 = jugador_elige_pokemon(equipo2)
+    vivos_1 = lectores.extraer_integrantes_equipo(equipo1)
+    vivos_2 = lectores.extraer_integrantes_equipo(equipo2)
+    eleccion1 = jugador_elige_pokemon(vivos_1)
+    eleccion2 = jugador_elige_pokemon(vivos_2)
     combatiente1 = Combatiente(eleccion1, equipo1)
     combatiente2 = Combatiente(eleccion2, equipo2)
 
@@ -127,11 +132,13 @@ def desarrollo_combate(equipo1, equipo2):
         un_turno(combatiente1, combatiente2, equipo1, equipo2) 
 
         if combatiente1.esta_vivo() == False:
-            #equipo1.remove(combatiente1.informacion[0])
+            informacion = combatiente1.informacion()
+            equipo1.remove(informacion)
             combatiente1.reemplazar(jugador_elige_pokemon(equipo1), equipo1)
 
         elif combatiente2.esta_vivo() == False:
-            #equipo2.remove(combatiente2.informacion[0])
+            informacion = combatiente2.informacion()
+            equipo2.remove(informacion)
             combatiente2.reemplazar(jugador_elige_pokemon(equipo2), equipo2)
 
     if len(equipo1) == 0:
@@ -139,6 +146,3 @@ def desarrollo_combate(equipo1, equipo2):
 
     elif len(equipo2) == 0:
         gamelib.say('Felicidades, ganó el jugador 1!')
-
-print('129')
-un_turno('', '', '', '')
