@@ -102,9 +102,9 @@ def dibujar_combate():
 
 def un_turno(combatiente1, combatiente2, equipo1, equipo2):
     print ('si')
-    gamelib.init(dibujar_combate) 
-    movimiento_jug_1 = jugador_elige_movimiento(equipo1, combatiente1.informacion[0])
-    movimiento_jug_2 = jugador_elige_movimiento(equipo2, combatiente2.informacion[0])
+    #gamelib.init(dibujar_combate) 
+    #movimiento_jug_1 = jugador_elige_movimiento(equipo1, combatiente1.informacion[0])
+    #movimiento_jug_2 = jugador_elige_movimiento(equipo2, combatiente2.informacion[0])
 
     # HACER. Quien mueve primero? Calcular efecto movimiento del primero. Afectar al otro. Calcular efecto segundo movimiento. Afectar al primero.
 

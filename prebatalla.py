@@ -1,5 +1,6 @@
 import gamelib
 import batalla
+import lectores
 
 ANCHO_VENTANA = batalla.ANCHO_VENTANA
 ALTO_VENTANA = batalla.ALTO_VENTANA
@@ -102,8 +103,12 @@ def recibir_archivo_jugador_1():
             
     except:
         gamelib.say("no se encuentra archvo de equipos del jugador 1")
+
+        global ARCHIVO1
+        ARCHIVO1 = equipos_del_jugador1
+        print (ARCHIVO1)
     return equipos_del_jugador1
-    
+
 def recibir_archivo_jugador_2():
     equipos_del_jugador2 = gamelib.input("Ingrese la ruta en la que el jugador dos tiene sus equipos")
     
@@ -113,22 +118,28 @@ def recibir_archivo_jugador_2():
             
     except:
         gamelib.say("no se encuentra archvo de equipos del jugador 2")
+
+        global ARCHIVO2
+        ARCHIVO2 = equipos_del_jugador2
+        print (ARCHIVO2)
     return equipos_del_jugador2
 
 
-def recibir_equipo_jugador_1(equipos_del_jugador1):
+def recibir_equipo_jugador_1():#equipos_del_jugador1):
     lector_equipo_elegido1 = gamelib.input("Ingrese el numero de equipo con el que va a jugar")
     while not lector_equipo_elegido1.isdigit():
         lector_equipo_elegido1 = gamelib.input("No ingreso un numero. Ingrese el numero de equipo con el que va a jugar")
-    equipo1 = lectores.lector_por_numero(lector_equipo_elegido1, equipos_del_jugador1)
-    return equipo1
+    global EQUIPO1
+    EQUIPO1 = lectores.lector_por_numero(lector_equipo_elegido1, EQUIPO1)
+    return EQUIPO1
     
-def recibir_equipo_jugador_2(equipos_del_jugador2):
+def recibir_equipo_jugador_2():#equipos_del_jugador2):
     lector_equipo_elegido2 = gamelib.input("Ingrese el numero de equipo con el que va a jugar")
     while not lector_equipo_elegido2.isdigit():
         lector_equipo_elegido2 = gamelib.input("No ingreso un numero. Ingrese el numero de equipo con el que va a jugar")
-    equipo2 = lectores.lector_por_numero(lector_equipo_elegido2, equipos_del_jugador2)
-    return equipo2
+    global EQUIPO2
+    EQUIPO2 = lectores.lector_por_numero(lector_equipo_elegido2, EQUIPO2)
+    return EQUIPO2
 
 
 def botones_seleccion_archivos(x, y):
