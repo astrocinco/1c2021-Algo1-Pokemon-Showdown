@@ -1,5 +1,6 @@
 import lectores
 import gamelib
+
 ANCHO_VENTANA = 900
 ALTO_VENTANA = 600
 

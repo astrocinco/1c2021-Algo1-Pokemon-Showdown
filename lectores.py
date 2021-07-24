@@ -1,5 +1,6 @@
 import csv
 
+
 def lector_por_numero(nro, nombre_archivo):
     """
     Lee el archivo ingresado por parametro, ignora la primera linea y retorna un diccionario con el numero de linea como llave.
@@ -12,8 +13,11 @@ def lector_por_numero(nro, nombre_archivo):
             leido = linea#.readline()
             contador += 1
             if contador == nro:
+                print (nro, nombre_archivo, leido)
                 return leido[:-1].split(';')
 
 
 def movimiento_en_pokemon(numero, archivo):
     return 1 # HACER
+
+print (lector_por_numero(37, 'equipos.csv'))
