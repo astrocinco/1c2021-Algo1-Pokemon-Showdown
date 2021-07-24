@@ -1,3 +1,5 @@
+import csv
+
 def lector_por_numero(nro, nombre_archivo):
     """
     Lee el archivo ingresado por parametro, ignora la primera linea y retorna un diccionario con el numero de linea como llave.
