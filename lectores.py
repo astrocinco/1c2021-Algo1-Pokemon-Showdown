@@ -28,7 +28,7 @@ def extraer_integrantes_equipo(equipo):
     for i in range (2, len(equipo), 2):
         if equipo[i] == '': continue
         resultado.append(equipo[i])
-    print ('28 |', resultado)
+    #print ('28 |', resultado)
     return resultado
 
 
