@@ -1,3 +1,7 @@
 equipo_numero;equipo_nombre;integrante1;movimientos1;integrante2;movimientos2;integrante3;movimientos3;integrante4;movimientos4;integrante5;movimientos5;integrante6;movimientos6
 1;Fueguinos;4;firespin,firepunch,growl,irontail;5;cut,firepunch,firespin,growl;6;fly,headbutt,hurricane,aerialace;38;fireblast,energyball,firespin,swift;39;charm,bubblebeam,psychic,screech;41;fly,headbutt,heatwave,protect
+<<<<<<< HEAD
 2;Terrestres;27;aerialace,mudslap,rockslide,rocktomb;28;sandstorm,strength,earthquake,fissure;30;charm,cut,growl,tackle;31;charm,aquatail,icepunch,irontail;34;cut,bulldoze,firepunch,megakick;32;superfang,suckerpunch,tackle,thunderbolt;
+=======
+2;Terrestres;27;aerialace,mudslap,rockslide,rocktomb;28;sandstorm,strength,earthquake,fissure;30;charm,cut,growl,tackle;31;charm,aquatail,icepunch,irontail;34;cut,bulldoze,firepunch,megakick;32;superfang,suckerpunch,tackle,thunderbolt;
+>>>>>>> bc492a996d70996aa3175276ee17698b3a82d739
