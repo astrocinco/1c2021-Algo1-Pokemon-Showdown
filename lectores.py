@@ -7,25 +7,28 @@ def lector_por_numero(nro, nombre_archivo):
     El diccionario contiene toda la información de la linea solicitada como lista.
     Retorna la información de solo un pokemon.
     """
+    if type(nro) is str:
+        nro = int(nro)
     contador = -1
     with open(nombre_archivo) as archivo:
         for linea in archivo:
-            leido = linea#.readline()
+            leido = linea
             contador += 1
             if contador == nro:
-                print (nro, nombre_archivo, leido)
+                
                 return leido[:-1].split(';')
 
 
 def extraer_integrantes_equipo(equipo):
+    """
+    Recibe una lista con toda la información de un equipo.
+    Retorna una lista de números de pokemones. 
+    """
     resultado = []
-
-    resultado.append(equipo[2])
-    resultado.append(equipo[4])
-    resultado.append(equipo[6])
-    #resultado.append(equipo[8])
-    #resultado.append(equipo[10])
-    #resultado.append(equipo[12]) # REHACER PARA CUALQUIER TAMAÑO DE EQUIPO
+    for i in range (2, len(equipo), 2):
+        if equipo[i] == '': continue
+        resultado.append(equipo[i])
+    print ('28 |', resultado)
     return resultado
 
 

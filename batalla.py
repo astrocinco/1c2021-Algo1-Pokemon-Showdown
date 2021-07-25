@@ -8,19 +8,22 @@ archivo_pokemones = 'pokemons.csv'
 archivo_detalle_movimientos = 'detalle_movimientos.csv'
 archivo_tabla_tipos = 'tabla_tipos.csv'
 
+MENSAJE_ELIJA_PROX_COMBATIENTE = 'Ingrese el número del pokemon que luchará a continuación: {}'
+MENSAJE_ERROR_ELECCION_PROX_COMBATIENTE = 'No eligió correctamente su pŕoximo combatiente. Inténtalo de nuevo'
+
 class Combatiente:
     def __init__(self, numero, archivo):
         stats = lectores.lector_por_numero(numero, archivo_pokemones)
-        self.numero = stats[0]
+        self.numero = int(stats[0])
         self.imagen = stats[1]
         self.nombre = stats[2]
         self.tipos = stats[3]
-        self.hp = stats[4]
-        self.ataque = stats[5]
-        self.defensa = stats[6]
-        self.speat = stats[7]
-        self.spedf = stats[8]
-        self.velocidad = stats[9]
+        self.hp = int(stats[4])
+        self.ataque = int(stats[5])
+        self.defensa = int(stats[6])
+        self.speat = int(stats[7])
+        self.spedf = int(stats[8])
+        self.velocidad = int(stats[9])
         self.movimientos = lectores.movimiento_en_pokemon(numero, archivo)
 
     def esta_vivo(self):
@@ -46,12 +49,33 @@ class Combatiente:
         return self.numero, self.imagen, self.nombre, self.tipos, self.hp, self.ataque, self.defensa, self.speat, self.spedf, self.velocidad
 
 
+def numero_a_nombre(nro):
+    """
+    Recibe el número de un pokemon y retorna su nombre en string.
+    """
+    info = lectores.lector_por_numero(nro, archivo_pokemones)
+    print ('57 |', info)
+    return info[2]
+
+
 def jugador_elige_pokemon(lista):
     """
-    Recibe una lista de todo el equipo que puede elegir el usuario
-    y retorna uno de ellos
+    Recibe una lista de pokemones de todo el equipo que puede elegir el usuario
+    y retorna el que elija el usuario.
     """
-    return 14 # HACER
+    lista_en_nombres = []
+    for i in range (len(lista)):
+        print ('68 |', lista[i])
+        lista_en_nombres.append([numero_a_nombre(int(lista[i])), lista[i]])
+
+    eleccion = ''
+    while eleccion == '':
+        ingreso = gamelib.input(MENSAJE_ELIJA_PROX_COMBATIENTE.format(lista_en_nombres))
+        if ingreso in lista:
+            eleccion = ingreso
+        else: gamelib.say(MENSAJE_ERROR_ELECCION_PROX_COMBATIENTE)
+
+    return eleccion
 
 
 def jugador_elige_movimiento(lista, numero):
@@ -93,11 +117,11 @@ def dibujar_combate(nombre_1, nombre_2):
     TITULO_Y = 70
     COLOR_AZUL = '#0d1364'
     MITAD_X = ANCHO_VENTANA // 2
-
+    print ('120 | ', nombre_1, nombre_2)
     gamelib.draw_begin()
     gamelib.draw_rectangle(VACIO, VACIO, ANCHO_VENTANA, ALTO_VENTANA)  # FONDO BLANCO
     gamelib.draw_rectangle(VACIO, VACIO, ANCHO_VENTANA, FRANJA_AZUL_Y, fill=COLOR_AZUL)  # FRANJA SUPERIOR AZUL
-    gamelib.draw_text('Equipo {} vs Equipo {}'.format(nombre_1, nombre_2), MITAD_X, TITULO_Y, fill='white', size=30, anchor='s')  # TITULO
+    gamelib.draw_text('Equipo {} vs Equipo {}'.format(nombre_1[1], nombre_2[1]), MITAD_X, TITULO_Y, fill='white', size=30, anchor='s')  # TITULO
     #  SEGUIR
     gamelib.draw_end()
 
@@ -108,8 +132,8 @@ def un_turno(combatiente1, combatiente2, equipo1, equipo2):
     Calcula quien mueve primero y luego llama a las funciones calculadoras de daño, efecto y sanacion.
     """
     dibujar_combate(equipo1, equipo2)
-    movimiento_jug_1 = jugador_elige_movimiento(equipo1, combatiente1.informacion[0])
-    movimiento_jug_2 = jugador_elige_movimiento(equipo2, combatiente2.informacion[0])
+    #movimiento_jug_1 = jugador_elige_movimiento(equipo1, combatiente1.informacion[0])
+    #movimiento_jug_2 = jugador_elige_movimiento(equipo2, combatiente2.informacion[0])
     # SEGUIR. 
     # Quien mueve primero? Calcular efecto movimiento del primero. Afectar al otro. Calcular efecto segundo movimiento. Afectar al primero.
 
@@ -125,6 +149,7 @@ def desarrollo_combate(equipo1, equipo2):
     vivos_2 = lectores.extraer_integrantes_equipo(equipo2)
     eleccion1 = jugador_elige_pokemon(vivos_1)
     eleccion2 = jugador_elige_pokemon(vivos_2)
+    print ('150 |', eleccion1, eleccion2)
     combatiente1 = Combatiente(eleccion1, equipo1)
     combatiente2 = Combatiente(eleccion2, equipo2)
 
