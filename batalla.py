@@ -117,7 +117,7 @@ def dibujar_combate(nombre_1, nombre_2):
     TITULO_Y = 70
     COLOR_AZUL = '#0d1364'
     MITAD_X = ANCHO_VENTANA // 2
-    print ('120 | ', nombre_1, nombre_2)
+    #print ('120 | ', nombre_1, nombre_2)
     gamelib.draw_begin()
     gamelib.draw_rectangle(VACIO, VACIO, ANCHO_VENTANA, ALTO_VENTANA)  # FONDO BLANCO
     gamelib.draw_rectangle(VACIO, VACIO, ANCHO_VENTANA, FRANJA_AZUL_Y, fill=COLOR_AZUL)  # FRANJA SUPERIOR AZUL
@@ -150,6 +150,7 @@ def desarrollo_combate(equipo1, equipo2):
     eleccion1 = jugador_elige_pokemon(vivos_1)
     eleccion2 = jugador_elige_pokemon(vivos_2)
     print ('150 |', eleccion1, eleccion2)
+    print ('151 |', equipo1, equipo2)
     combatiente1 = Combatiente(eleccion1, equipo1)
     combatiente2 = Combatiente(eleccion2, equipo2)
 
@@ -158,12 +159,12 @@ def desarrollo_combate(equipo1, equipo2):
 
         if combatiente1.esta_vivo() == False:
             informacion = combatiente1.informacion()
-            equipo1.remove(informacion)
+            equipo1.remove(informacion)  # STR
             combatiente1.reemplazar(jugador_elige_pokemon(equipo1), equipo1)
 
         elif combatiente2.esta_vivo() == False:
             informacion = combatiente2.informacion()
-            equipo2.remove(informacion)
+            equipo2.remove(informacion)  # STR
             combatiente2.reemplazar(jugador_elige_pokemon(equipo2), equipo2)
 
     if len(equipo1) == 0:
@@ -171,3 +172,17 @@ def desarrollo_combate(equipo1, equipo2):
 
     elif len(equipo2) == 0:
         gamelib.say('Felicidades, ganó el jugador 1!')
+
+"""
+# TESTING
+equipo1 = ['2', 'Voladores', '16', 'aerialace,aircutter,gust,protect', '17', 'fly,gust,headbutt,hurricane', '18', 'mudslap,protect,rest,quickattack', '19', 'cut,furyswipes,irontail,screech', '2', 'rest,strength,megadrain,stringshot', '20', 'roar,suckerpunch,superfang,swift']
+equipo2 = ['1', 'Fueguinos', '4', 'firespin,firepunch,growl,irontail', '5', 'cut,firepunch,firespin,growl', '6', 'fly,headbutt,hurricane,aerialace', '38', 'fireblast,energyball,firespin,swift', '39', 'charm,bubblebeam,psychic,screech', '41', 'fly,headbutt,heatwave,protect']
+eleccion1 = '16'
+eleccion2 = '5'
+combatiente1 = Combatiente(eleccion1, equipo1)
+combatiente2 = Combatiente(eleccion2, equipo2)
+def prueba():
+    un_turno(combatiente1, combatiente2, equipo1, equipo2)
+
+gamelib.init(prueba)
+y"""
