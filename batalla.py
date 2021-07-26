@@ -87,7 +87,7 @@ def jugador_elige_movimiento(lista, numero):
     y retorna el movimiento que elegió el usuario para ese pokemon
     """
     eleccion = ''
-    indice_pokemon = lista.index(numero)
+    indice_pokemon = lista.index(str(numero))
     opciones = lista[indice_pokemon + 1]
 
     while eleccion == '':
@@ -148,10 +148,11 @@ def dibujar_combate(combatiente1, combatiente2, equipo_1, equipo_2, vivos_1, viv
     COLOR_AZUL = '#0d1364'
     MITAD_X = ANCHO_VENTANA // 2
     ANCHO_RECTANGULO_HP = 80
+    #BARRA_HP_1_X = 
 
     info_combat_1 = combatiente1.informacion()
     info_combat_2 = combatiente2.informacion()
-    #print ('154 | ', info_combat_1, info_combat_2)
+    print ('154 | ', info_combat_1, info_combat_2)
     #print ('155 | ', info_combat_1[0])
     hp_combat_1_entera = int(lectores.lector_por_numero(info_combat_1[0], ARCHIVO_POKEMONES)[4]) + 110
     hp_combat_2_entera = int(lectores.lector_por_numero(info_combat_2[0], ARCHIVO_POKEMONES)[4]) + 110
@@ -159,17 +160,22 @@ def dibujar_combate(combatiente1, combatiente2, equipo_1, equipo_2, vivos_1, viv
     hp_combat_2_actual = info_combat_2[4]
     hp_pocentaje_1 = hp_combat_1_actual // hp_combat_1_entera
     hp_pocentaje_2 = hp_combat_2_actual // hp_combat_2_entera
+    color_1 = 'green'
+    color_2 = 'orange'
+    hp_pocentaje_2 = 0.2
 
     gamelib.draw_begin()
     gamelib.draw_rectangle(VACIO, VACIO, ANCHO_VENTANA, ALTO_VENTANA)  # FONDO BLANCO
     gamelib.draw_rectangle(VACIO, VACIO, ANCHO_VENTANA, FRANJA_AZUL_Y, fill=COLOR_AZUL)  # FRANJA SUPERIOR AZUL
     gamelib.draw_text('Equipo {} vs Equipo {}'.format(equipo_1[1], equipo_2[1]), MITAD_X, TITULO_Y, fill='white', size=30, anchor='s')  # TITULO
-    gamelib.draw_text('Jugador 1', 10, ALTO_VENTANA - 10) #
-    gamelib.draw_text('Jugador 2', 500, FRANJA_AZUL_Y) #
-    gamelib.draw_image(info_combat_1[1], 10, 300 + 20) #
+    gamelib.draw_text('Jugador 1', 10, ALTO_VENTANA - 10, fill='black', anchor='w') #
+    gamelib.draw_text('Jugador 2', ANCHO_VENTANA, FRANJA_AZUL_Y, fill='black', anchor='ne') #
+    gamelib.draw_image(info_combat_1[1], 10, 240) #
     gamelib.draw_image(info_combat_2[1], 500, FRANJA_AZUL_Y + 20) #
-    gamelib.draw_rectangle(10,  300, (10 +  ANCHO_RECTANGULO_HP) * hp_pocentaje_1, 300 + 5) #
-    gamelib.draw_rectangle(500, 300, (500 + ANCHO_RECTANGULO_HP) * hp_pocentaje_2, 300 + 5) #
+    gamelib.draw_rectangle(10,  200, 10 +  ANCHO_RECTANGULO_HP, 200 + 10, fill='black') # BARRA HP TOTAL 1
+    gamelib.draw_rectangle(600, 450, 600 + ANCHO_RECTANGULO_HP, 450 + 10, fill='black') # BARRA HP TOTAL 2
+    gamelib.draw_rectangle(10,  200, 10 +  ANCHO_RECTANGULO_HP * hp_pocentaje_1, 200 + 10, fill=color_1) # BARRA HP RESTANTE 1
+    gamelib.draw_rectangle(600, 450, 600 + ANCHO_RECTANGULO_HP * hp_pocentaje_2, 450 + 10, fill=color_2) # BARRA HP RESTANTE 2
     """
     for i in range (len(vivos_1)):
         gamelib.draw_image(i)
@@ -237,3 +243,4 @@ def desarrollo_combate(equipo1, equipo2):
         gamelib.say('Felicidades, ganó el jugador 1!')
 
 # Prueba
+# Prueba 2
