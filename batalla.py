@@ -34,7 +34,7 @@ class Combatiente:
             return True
         else: return False
 
-    def reemplazar(self, numero, archivo):        
+    def reemplazar(self, numero, archivo):
         stats = lectores.lector_por_numero(numero, ARCHIVO_POKEMONES)
         self.numero = stats[0]
         self.imagen = stats[1]
@@ -218,7 +218,7 @@ def desarrollo_combate(equipo1, equipo2):
     combatiente2 = Combatiente(eleccion2, equipo2)
 
     while not len(equipo1) == 0 or not len(equipo2) == 0:
-        un_turno(combatiente1, combatiente2, equipo1, equipo2, vivos_1, vivos_2) 
+        un_turno(combatiente1, combatiente2, equipo1, equipo2, vivos_1, vivos_2)
 
         if combatiente1.esta_vivo() == False:
             informacion = combatiente1.informacion()
@@ -235,3 +235,5 @@ def desarrollo_combate(equipo1, equipo2):
 
     elif len(equipo2) == 0:
         gamelib.say('Felicidades, ganó el jugador 1!')
+
+# Prueba
