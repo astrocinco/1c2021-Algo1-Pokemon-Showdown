@@ -188,8 +188,8 @@ def un_turno(combatiente1, combatiente2, equipo1, equipo2, vivos_1, vivos_2):
     Calcula quien mueve primero y luego llama a las funciones calculadoras de daño, efecto y sanacion.
     """
     dibujar_combate(combatiente1, combatiente2, equipo1, equipo2, vivos_1, vivos_2)
-    movimiento_jug_1 = jugador_elige_movimiento(equipo1, combatiente1.informacion[0])
-    movimiento_jug_2 = jugador_elige_movimiento(equipo2, combatiente2.informacion[0])
+    movimiento_jug_1 = jugador_elige_movimiento(equipo1, (combatiente1.informacion())[0])
+    movimiento_jug_2 = jugador_elige_movimiento(equipo2, (combatiente2.informacion())[0])
     mas_rapido = quien_primero(combatiente1, combatiente2)
     if mas_rapido == 1:
         # CALCULAR QUE HACE movimiento_jug_1
