@@ -15,7 +15,7 @@ MENSAJE_ELIJA_MOVIMIENTO = 'Elija que movimiento usará {} en este turno. Tienes
 MENSAJE_ERROR_ELECCION_MOVIMIENTO = 'No eligió correctamente su pŕoximo movmiento. Inténtalo de nuevo'
 
 class Combatiente:
-    def __init__(self, numero, archivo):
+    def __init__(self, numero, lista):
         stats = lectores.lector_por_numero(numero, ARCHIVO_POKEMONES)
         self.numero = int(stats[0])
         self.imagen = stats[1]
@@ -27,14 +27,14 @@ class Combatiente:
         self.speat = int(stats[7])
         self.spedf = int(stats[8])
         self.velocidad = int(stats[9])
-        self.movimientos = lectores.movimiento_en_pokemon(numero, archivo)
+        self.movimientos = lectores.movimiento_en_pokemon(lista, numero)
 
     def esta_vivo(self):
         if self.hp > 0:
             return True
         else: return False
 
-    def reemplazar(self, numero, archivo):
+    def reemplazar(self, numero, lista):
         stats = lectores.lector_por_numero(numero, ARCHIVO_POKEMONES)
         self.numero = stats[0]
         self.imagen = stats[1]
@@ -46,10 +46,10 @@ class Combatiente:
         self.speat = stats[7]
         self.spedf = stats[8]
         self.velocidad = stats[9]
-        self.movimientos = lectores.movimiento_en_pokemon(numero, archivo)
+        self.movimientos = lectores.movimiento_en_pokemon(lista, numero)
 
     def informacion(self):
-        return self.numero, self.imagen, self.nombre, self.tipos, self.hp, self.ataque, self.defensa, self.speat, self.spedf, self.velocidad
+        return self.numero, self.imagen, self.nombre, self.tipos, self.hp, self.ataque, self.defensa, self.speat, self.spedf, self.velocidad, self.movimientos
 
 
 def numero_a_nombre(nro):
@@ -87,14 +87,14 @@ def jugador_elige_movimiento(lista, numero):
     y retorna el movimiento que elegió el usuario para ese pokemon
     """
     eleccion = ''
-    indice_pokemon = lista.index(str(numero))
-    opciones = lista[indice_pokemon + 1]
+    opciones = lectores.movimiento_en_pokemon(lista, numero)
 
     while eleccion == '':
         ingreso = gamelib.input(MENSAJE_ELIJA_MOVIMIENTO.format(numero_a_nombre(numero), opciones))
         if ingreso in opciones:
             eleccion = ingreso
         else: gamelib.say(MENSAJE_ERROR_ELECCION_MOVIMIENTO)
+    #print ('97 |', eleccion)
     return eleccion
 
 
@@ -137,6 +137,22 @@ def quien_primero(combatiente1, combatiente2):
     else: raise Exception ('Error en función quien_primero()')
 
 
+def calcular_movimiento(movimiento):
+    informacion = lectores.detalles_movimiento(movimiento, ARCHIVO_DETALLE_MOVIMIENTOS)
+    print ('142 | ', informacion)
+    if informacion['categoria'] == 'Special' or  informacion['categoria'] == 'Physical':
+        print ('Trigger daño')
+        calculadora_daño()
+    elif informacion['categoria'] == 'Status' and informacion['objetivo'] == 'self' and informacion['stats'] == '':
+        print ('Trigger sanacion')
+        calculadora_sanacion()
+    elif informacion['categoria'] == 'Status':
+        print ('Trigger stat boost')
+        calculadora_efecto()
+    else:
+        raise Exception('Error en calcular movimientos')
+
+
 def dibujar_combate(combatiente1, combatiente2, equipo_1, equipo_2, vivos_1, vivos_2):
     """
     Dibuja el estado del combate al principio del turno, para que los usuarios puedan elegir que hacer a continuación según
@@ -162,7 +178,7 @@ def dibujar_combate(combatiente1, combatiente2, equipo_1, equipo_2, vivos_1, viv
     hp_pocentaje_2 = hp_combat_2_actual // hp_combat_2_entera
     color_1 = 'green'
     color_2 = 'orange'
-    hp_pocentaje_2 = 0.2
+    hp_pocentaje_2 = 0.2 ###################### DEBUG
 
     gamelib.draw_begin()
     gamelib.draw_rectangle(VACIO, VACIO, ANCHO_VENTANA, ALTO_VENTANA)  # FONDO BLANCO
@@ -198,13 +214,15 @@ def un_turno(combatiente1, combatiente2, equipo1, equipo2, vivos_1, vivos_2):
     movimiento_jug_2 = jugador_elige_movimiento(equipo2, (combatiente2.informacion())[0])
     mas_rapido = quien_primero(combatiente1, combatiente2)
     if mas_rapido == 1:
-        # CALCULAR QUE HACE movimiento_jug_1
+        calcular_movimiento(movimiento_jug_1)
         if combatiente2.esta_vivo() == False:
             pass
+        calcular_movimiento(movimiento_jug_2)
     if mas_rapido == 2:
-        # CALCULAR QUE HACE movimiento_jug_2
+        calcular_movimiento(movimiento_jug_2)
         if combatiente1.esta_vivo() == False:
-            pass
+            pass 
+        calcular_movimiento(movimiento_jug_1)
 
     pass
 
@@ -218,8 +236,8 @@ def desarrollo_combate(equipo1, equipo2):
     vivos_2 = lectores.extraer_integrantes_equipo(equipo2)
     eleccion1 = jugador_elige_pokemon(vivos_1)
     eleccion2 = jugador_elige_pokemon(vivos_2)
-    #print ('150 |', eleccion1, eleccion2)
-    #print ('151 |', equipo1, equipo2)
+    #print ('225 |', eleccion1, eleccion2)
+    #print ('226 |', equipo1, equipo2)
     combatiente1 = Combatiente(eleccion1, equipo1)
     combatiente2 = Combatiente(eleccion2, equipo2)
 

@@ -32,5 +32,18 @@ def extraer_integrantes_equipo(equipo):
     return resultado
 
 
-def movimiento_en_pokemon(numero, archivo):
-    return 1 # HACER
+def movimiento_en_pokemon(lista, numero):
+    #print ('36 |', lista, numero)
+    indice_pokemon = lista[2:].index(str(numero))
+    #print (indice_pokemon)
+    opciones = lista[indice_pokemon + 3]
+
+    return opciones
+
+
+def detalles_movimiento(movimiento, archivo):
+    with open(archivo) as archivo:
+        reader = csv.DictReader(archivo)
+        for linea in reader:
+            if linea['nombre'] == movimiento:
+                return linea
