@@ -142,13 +142,13 @@ def calcular_movimiento(movimiento):
     print ('142 | ', informacion)
     if informacion['categoria'] == 'Special' or  informacion['categoria'] == 'Physical':
         print ('Trigger daño')
-        calculadora_daño()
+        #calculadora_daño()
     elif informacion['categoria'] == 'Status' and informacion['objetivo'] == 'self' and informacion['stats'] == '':
         print ('Trigger sanacion')
-        calculadora_sanacion()
+        #calculadora_sanacion()
     elif informacion['categoria'] == 'Status':
         print ('Trigger stat boost')
-        calculadora_efecto()
+        #calculadora_efecto()
     else:
         raise Exception('Error en calcular movimientos')
 
@@ -215,13 +215,11 @@ def un_turno(combatiente1, combatiente2, equipo1, equipo2, vivos_1, vivos_2):
     mas_rapido = quien_primero(combatiente1, combatiente2)
     if mas_rapido == 1:
         calcular_movimiento(movimiento_jug_1)
-        if combatiente2.esta_vivo() == False:
-            pass
+        if combatiente2.esta_vivo() == False: pass
         calcular_movimiento(movimiento_jug_2)
     if mas_rapido == 2:
         calcular_movimiento(movimiento_jug_2)
-        if combatiente1.esta_vivo() == False:
-            pass 
+        if combatiente1.esta_vivo() == False: pass 
         calcular_movimiento(movimiento_jug_1)
 
     pass
