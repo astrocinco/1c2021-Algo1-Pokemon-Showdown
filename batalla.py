@@ -273,6 +273,8 @@ def dibujar_combate(combatiente1, combatiente2, equipo_1, equipo_2, vivos_1, viv
     J2_X = 550
     J2_Y = 450
     ALTO_BARRA_HP = 10
+    INICIO_ESFERAS_1 = 550
+    INICIO_ESFERAS_2 = 210
 
     info_combat_1 = combatiente1.informacion()
     info_combat_2 = combatiente2.informacion()
@@ -282,6 +284,10 @@ def dibujar_combate(combatiente1, combatiente2, equipo_1, equipo_2, vivos_1, viv
     hp_combat_2_actual = info_combat_2[4]
     hp_pocentaje_1 = hp_combat_1_actual / hp_combat_1_entera
     hp_pocentaje_2 = hp_combat_2_actual / hp_combat_2_entera
+    if hp_pocentaje_1 < 0.0:
+        hp_pocentaje_1 = 0.0
+    if hp_pocentaje_2 < 0.0:
+        hp_pocentaje_2 = 0.0
     color_1 = color_barra(hp_pocentaje_1)
     color_2 = color_barra(hp_pocentaje_2)
     TEXTO_MOSTRAR_STATS = '{} {}, Tipo: {}, HP: {}, Ataque: {}, Defensa: {}, S-Ataque:{}, S-Defensa: {}, Velocidad: {}'
@@ -305,6 +311,26 @@ def dibujar_combate(combatiente1, combatiente2, equipo_1, equipo_2, vivos_1, viv
     gamelib.draw_rectangle(J1_X,  J1_Y, J1_X +  ANCHO_RECTANGULO_HP * hp_pocentaje_1, J1_Y + ALTO_BARRA_HP, fill=color_1) # BARRA HP RESTANTE 1
     gamelib.draw_rectangle(J2_X, J2_Y, J2_X + ANCHO_RECTANGULO_HP * hp_pocentaje_2, J2_Y + ALTO_BARRA_HP, fill=color_2) # BARRA HP RESTANTE 2
 
+    contador_color_1 = 0
+    for i in range (6):  # PUNTOS DE COLOR QUE INDICAN LOS POKEMONES VIVOS RESTANTES
+        if contador_color_1 < len(vivos_1):
+            color_vivos = 'green'
+        if contador_color_1 >= len(vivos_1):
+            color_vivos = 'red'
+        print (contador_color_1, len(vivos_1), color_vivos)
+        gamelib.draw_oval(10, INICIO_ESFERAS_1 - (15 * i), 20, INICIO_ESFERAS_1 + 10 - (15 * i), fill=color_vivos)
+        contador_color_1 += 1
+
+    contador_color_2 = 0
+    for i in range (6):  # PUNTOS DE COLOR QUE INDICAN LOS POKEMONES VIVOS RESTANTES
+        if contador_color_2 < len(vivos_2):
+            color_vivos = 'green'
+        if contador_color_2 >= len(vivos_2):
+            color_vivos = 'red'
+        print (contador_color_2, len(vivos_2), color_vivos)
+        gamelib.draw_oval(ANCHO_VENTANA - 20, INICIO_ESFERAS_2 - (15 * i), ANCHO_VENTANA - 10, INICIO_ESFERAS_2 + 10 - (15 * i), fill=color_vivos)
+        contador_color_2 += 1
+
     gamelib.draw_end()
 
 
@@ -321,11 +347,13 @@ def un_turno(combatiente1, combatiente2, equipo1, equipo2, vivos_1, vivos_2):
     if mas_rapido == 1:
         calcular_movimiento(movimiento_jug_1, combatiente1, combatiente2)
         if not combatiente2.esta_vivo(): 
+            dibujar_combate(combatiente1, combatiente2, equipo1, equipo2, vivos_1, vivos_2)
             return
         calcular_movimiento(movimiento_jug_2, combatiente2, combatiente1)
     if mas_rapido == 2:
         calcular_movimiento(movimiento_jug_2, combatiente2, combatiente1)
         if not combatiente1.esta_vivo(): 
+            dibujar_combate(combatiente1, combatiente2, equipo1, equipo2, vivos_1, vivos_2)
             return 
         calcular_movimiento(movimiento_jug_1, combatiente1, combatiente2)
 

@@ -48,3 +48,4 @@ def detalles_movimiento(movimiento, archivo):
         for linea in reader:
             if linea['nombre'] == movimiento:
                 return linea
+        raise Exception ('El movimiento no fue encontrado en el archivo.')
