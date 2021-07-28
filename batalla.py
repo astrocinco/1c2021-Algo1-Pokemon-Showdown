@@ -48,6 +48,14 @@ class Combatiente:
         self.velocidad = int(stats[9])
         self.movimientos = lectores.movimiento_en_pokemon(lista, numero)
 
+    def limpiar_stat_boost(self):
+        stats = lectores.lector_por_numero(self.numero, ARCHIVO_POKEMONES)
+        self.ataque = int(stats[5])
+        self.defensa = int(stats[6])
+        self.speat = int(stats[7])
+        self.spedf = int(stats[8])
+        self.velocidad = int(stats[9])
+
     def curar(self, nueva_hp):
         self.hp = nueva_hp
 
@@ -240,7 +248,7 @@ def un_turno(combatiente1, combatiente2, equipo1, equipo2, vivos_1, vivos_2):
         calcular_movimiento(movimiento_jug_2, combatiente2, combatiente1)
         if not combatiente1.esta_vivo(): 
             print ('B')
-            pass 
+            return 
         calcular_movimiento(movimiento_jug_1, combatiente1, combatiente2)
 
 
@@ -273,6 +281,7 @@ def desarrollo_combate(equipo1, equipo2):
             if len(vivos_1) == 0:
                 break
             combatiente1.reemplazar(jugador_elige_pokemon(vivos_1), equipo1)
+            combatiente2.limpiar_stat_boost()
 
         elif not combatiente2.esta_vivo():
             informacion = combatiente2.informacion()
@@ -282,6 +291,7 @@ def desarrollo_combate(equipo1, equipo2):
             if len(vivos_2) == 0:
                 break
             combatiente2.reemplazar(jugador_elige_pokemon(vivos_2), equipo2)
+            combatiente1.limpiar_stat_boost()
 
     print ('279 |', vivos_1, vivos_2)
 
