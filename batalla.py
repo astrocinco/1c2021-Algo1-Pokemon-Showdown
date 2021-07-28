@@ -16,6 +16,7 @@ MENSAJE_ERROR_ELECCION_MOVIMIENTO = 'No eligió correctamente su pŕoximo movmie
 
 class Combatiente:
     def __init__(self, numero, lista):
+        """Crea por primera vez un combatiente, recibiendo su número y sus movimientos disponibles."""
         stats = lectores.lector_por_numero(numero, ARCHIVO_POKEMONES)
         self.numero = int(stats[0])
         self.imagen = stats[1]
@@ -30,11 +31,13 @@ class Combatiente:
         self.movimientos = lectores.movimiento_en_pokemon(lista, numero)
 
     def esta_vivo(self):
+        """Retorna True o False si el pokemón está vivo (si su salud está por encima de 0)."""
         if self.hp > 0:
             return True
         else: return False
 
     def reemplazar(self, numero, lista):
+        """Reemplaza todas las stats según el número del nuevo pokemón."""
         stats = lectores.lector_por_numero(numero, ARCHIVO_POKEMONES)
         self.numero = int(stats[0])
         self.imagen = stats[1]
@@ -49,6 +52,10 @@ class Combatiente:
         self.movimientos = lectores.movimiento_en_pokemon(lista, numero)
 
     def limpiar_stat_boost(self):
+        """
+        Devuelve los atributos de ataque, defensa y velocidad 
+        a los que están en pokemons.csv para limpiar cualquier stat boost que pudo haber sido aplicado.
+        """
         stats = lectores.lector_por_numero(self.numero, ARCHIVO_POKEMONES)
         self.ataque = int(stats[5])
         self.defensa = int(stats[6])
@@ -57,12 +64,15 @@ class Combatiente:
         self.velocidad = int(stats[9])
 
     def curar(self, nueva_hp):
+        """Cambia la salud del pokemon por la ingresada."""
         self.hp = nueva_hp
 
     def herir(self, nueva_hp):
+        """Cambia la salud del pokemon por la ingresada."""
         self.hp = nueva_hp
 
     def informacion(self):
+        """Retorna todos los atributos del pokemon en juego."""
         return self.numero, self.imagen, self.nombre, self.tipos, self.hp, self.ataque, self.defensa, self.speat, self.spedf, self.velocidad, self.movimientos
 
 
@@ -164,6 +174,11 @@ def quien_primero(combatiente1, combatiente2):
 
 
 def calcular_movimiento(movimiento, combatienteactua, combatientedefiende):
+    """
+    Recibe el movimiento que se usará, y los dos objetos de los pokemones en juego
+    y define a qué calculadora se debe llamar según si el movimiento es de tipo
+    ataque, stat boost o sanación.
+    """
     informacion = lectores.detalles_movimiento(movimiento, ARCHIVO_DETALLE_MOVIMIENTOS)
     #print ('142 | ', informacion)
     if informacion['categoria'] == 'Special' or  informacion['categoria'] == 'Physical':
