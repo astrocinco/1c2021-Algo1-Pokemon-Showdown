@@ -153,8 +153,13 @@ def calculadora_daño(movimiento, combatienteactua, combatientedefiende):
     """
     Hace todos los calculos de daño, retorna el numero de daño hecho.
     """
-    info = combatientedefiende.informacion() 
-    resultado = info[4] - 50 # DEBUG. REMPLAZAR EL 80 POR LO QUE HACE EL COMBATIENTE QUE ACTUA
+    info_defensor = combatientedefiende.informacion()
+    tipo_defensor = info_defensor[3]
+    tipo_atacante = combatienteactua.informacion()[3]
+    damage_values = lectores.detalles_tipos(tipo_atacante, ARCHIVO_TABLA_TIPOS)
+    damage = int(damage_values[tipo_defensor])
+    damage *= combatienteactua.informacion()[5]
+    resultado = info_defensor[4] - damage # DEBUG. REMPLAZAR EL 80 POR LO QUE HACE EL COMBATIENTE QUE ACTUA
 
     combatientedefiende.herir(resultado)
 
@@ -219,7 +224,7 @@ def quien_primero(combatiente1, combatiente2):
     elif info1[9] < info2[9]:
         return 2
     elif info1 == info2:
-        aleatorio = random.choice((1, 2))
+        aleatorio = random.choice(1, 2)
         return aleatorio
     else: raise Exception ('Error en función quien_primero()')
 
