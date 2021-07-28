@@ -48,6 +48,14 @@ def detalles_movimiento(movimiento, archivo):
         for linea in reader:
             if linea['nombre'] == movimiento:
                 return linea
+
+def detalles_tipos(tipo, archivo):
+    with open(archivo) as archivo:
+        reader = csv.DictReader(archivo)
+
+        for linea in reader:
+            if linea['Types'] == tipo:
+                return linea
         raise Exception ('El movimiento no fue encontrado en el archivo.')
 
 

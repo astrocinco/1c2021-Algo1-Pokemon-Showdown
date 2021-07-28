@@ -157,25 +157,23 @@ def calculadora_daño(movimiento, combatienteactua, combatientedefiende):
     info_atacante = combatienteactua.informacion()
     tipo_atacante = info_atacante[3]
     tipo_defensor = info_defensor[3]
+    poder_base_del_ataque = lectores.detalles_movimiento(movimiento, ARCHIVO_DETALLE_MOVIMIENTOS)["poder"]
     ataque_simple= info_atacante[5]
     SpAtaque_atacante = info_atacante[7]
     defensa_simple = info_defensor[6]
-    SpDefensa_defensor = info_defensor[8]
-
+    spdefensa_defensor = info_defensor[8]
     special_or_not_atk = {}
     special_or_not_dfe = {}
     special_or_not_atk["damage"] = ataque_simple
     special_or_not_dfe["defensa"] = defensa_simple
     stab = {"multiplicador": 1}
-
-    poder_base_del_ataque = int(lectores.detalles_movimiento(movimiento, ARCHIVO_DETALLE_MOVIMIENTOS)["poder"]) 
     type_movement = lectores.detalles_movimiento(movimiento, ARCHIVO_DETALLE_MOVIMIENTOS)["categoria"]
     efectividad_values = lectores.detalles_tipos(tipo_atacante, ARCHIVO_TABLA_TIPOS)
     efectividad = int(efectividad_values[tipo_defensor])
    
     if type_movement == "Special":
         special_or_not_atk["damage"] = SpAtaque_atacante
-        special_or_not_dfe["defensa"] = SpDefensa_defensor
+        special_or_not_dfe["defensa"] = spdefensa_defensor
     elif type_movement == "Physical":
         special_or_not_atk["damage"] = ataque_simple
         special_or_not_dfe["defensa"] = defensa_simple
@@ -186,10 +184,9 @@ def calculadora_daño(movimiento, combatienteactua, combatientedefiende):
     
     base_damage = 15 * poder_base_del_ataque * (special_or_not_atk["damage"] / special_or_not_dfe["defensa"] / 50)
     damage = base_damage * stab["multiplicador"] * efectividad
-    roll = random.randint(80, 101)
-    resultado = (info_defensor[4] - damage) * roll / 100
+    resultado = info_defensor[4] - damage
 
-    combatientedefiende.herir(int(resultado)) 
+    combatientedefiende.herir(resultado)
 
 
 def calculadora_efecto(movimiento, combatienteactua, combatientedefiende):
@@ -252,7 +249,7 @@ def quien_primero(combatiente1, combatiente2):
     elif info1[9] < info2[9]:
         return 2
     elif info1 == info2:
-        aleatorio = random.choice((1, 2))
+        aleatorio = random.choice(1, 2)
         return aleatorio
     else: raise Exception ('Error en función quien_primero()')
 
