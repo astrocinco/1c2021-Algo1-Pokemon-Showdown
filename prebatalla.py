@@ -54,7 +54,7 @@ def menu_principio():
 
 def menu_archivos(ARCHIVO1, ARCHIVO2, EQUIPO1, EQUIPO2):
     """
-    Dibuja el menú de selección de archivos y equipos. Toma las elecciones de la variable global.
+    Dibuja el menú de selección de archivos y equipos.
     """
     BA1X1, BA1Y1, BA1X2, BA1Y2 = BOTON_ARCHIVO1_X1, BOTON_ARCHIVO1_Y1, BOTON_ARCHIVO1_X2, BOTON_ARCHIVO1_Y2
     BA2X1, BA2Y1, BA2X2, BA2Y2 = BOTON_ARCHIVO2_X1, BOTON_ARCHIVO2_Y1, BOTON_ARCHIVO2_X2, BOTON_ARCHIVO2_Y2
@@ -86,9 +86,7 @@ def menu_archivos(ARCHIVO1, ARCHIVO2, EQUIPO1, EQUIPO2):
 
 
 def error():
-    """
-    Función para detectar errores en la función navegacion
-    """
+    """Función para detectar errores en la navegacion"""
     gamelib.draw_begin()
     gamelib.draw_text('lol no', MITAD_X, MITAD_Y, fill='red', size=30, anchor='s')  # TITULO
     gamelib.draw_end()
@@ -96,7 +94,7 @@ def error():
 
 def recibir_archivo_jugador(nro_jugador):
     """
-    Recibe qué archivo de equipos quiere usar un jugador, y lo modifica de la variable global.
+    Recibe qué archivo de equipos quiere usar un jugador.
     Se ingresa por parametro qué numero de jugador está eligiendo archivo.
     """
     ingreso = gamelib.input(MENSAJE_INGRESE_RUTA)

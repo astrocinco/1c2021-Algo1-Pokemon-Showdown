@@ -53,6 +53,7 @@ class Combatiente:
         self.movimientos = lectores.movimiento_en_pokemon(lista, numero)
 
     def stat_boost(self, ataque, defensa, speat, spedf, velocidad):
+        """Boostea todos los atributos en los que recibe True"""
         if ataque:
             self.ataque = self.ataque * 2
         if defensa:
@@ -65,6 +66,7 @@ class Combatiente:
             self.velocidad = self.velocidad * 2
 
     def stat_nerf(self, ataque, defensa, speat, spedf, velocidad):
+        """Nerfea todos los atributos en los que recibe True"""
         if ataque:
             self.ataque = self.ataque // 2
         if defensa:
@@ -278,6 +280,7 @@ def calcular_movimiento(movimiento, combatienteactua, combatientedefiende):
 
 
 def color_barra(porcentaje):
+    """Cambia el color de la barra de salud"""
     if porcentaje >= 0.8:
         color = 'green'
 
