@@ -48,6 +48,7 @@ def detalles_movimiento(movimiento, archivo):
         for linea in reader:
             if linea['nombre'] == movimiento:
                 return linea
+<<<<<<< HEAD
 
 def detalles_tipos(tipo, archivo):
     with open(archivo) as archivo:
@@ -56,3 +57,6 @@ def detalles_tipos(tipo, archivo):
         for linea in reader:
             if linea['Types'] == tipo:
                 return linea
+=======
+        raise Exception ('El movimiento no fue encontrado en el archivo.')
+>>>>>>> 0825e0cbb2e4916310d52435475879412d410128
