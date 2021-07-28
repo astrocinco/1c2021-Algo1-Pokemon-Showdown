@@ -14,6 +14,7 @@ MENSAJE_ERROR_ELECCION_PROX_COMBATIENTE = 'No eligió correctamente su pŕoximo 
 MENSAJE_ELIJA_MOVIMIENTO = 'Elija que movimiento usará {} en este turno. Tienes disponibles: {}'
 MENSAJE_ERROR_ELECCION_MOVIMIENTO = 'No eligió correctamente su pŕoximo movmiento. Inténtalo de nuevo'
 
+
 class Combatiente:
     def __init__(self, numero, lista):
         """Crea por primera vez un combatiente, recibiendo su número y sus movimientos disponibles."""
@@ -51,6 +52,30 @@ class Combatiente:
         self.velocidad = int(stats[9])
         self.movimientos = lectores.movimiento_en_pokemon(lista, numero)
 
+    def stat_boost(self, ataque, defensa, speat, spedf, velocidad):
+        if ataque:
+            self.ataque = self.ataque * 2
+        if defensa:
+            self.defensa = self.defensa * 2
+        if speat:
+            self.speat = self.speat * 2
+        if spedf:
+            self.spedf = self.spedf * 2
+        if velocidad:
+            self.velocidad = self.velocidad * 2
+
+    def stat_nerf(self, ataque, defensa, speat, spedf, velocidad):
+        if ataque:
+            self.ataque = self.ataque // 2
+        if defensa:
+            self.defensa = self.defensa // 2
+        if speat:
+            self.speat = self.speat // 2
+        if spedf:
+            self.spedf = self.spedf // 2
+        if velocidad:
+            self.velocidad = self.velocidad // 2
+
     def limpiar_stat_boost(self):
         """
         Devuelve los atributos de ataque, defensa y velocidad 
@@ -81,7 +106,7 @@ def numero_a_nombre(nro):
     Recibe el número de un pokemon y retorna su nombre en string.
     """
     info = lectores.lector_por_numero(nro, ARCHIVO_POKEMONES)
-    #print ('57 |', info)
+
     return info[2]
 
 
@@ -92,7 +117,6 @@ def jugador_elige_pokemon(lista):
     """
     lista_en_nombres = []
     for i in range (len(lista)):
-        #print ('68 |', lista)
         lista_en_nombres.append([numero_a_nombre(int(lista[i])), lista[i]])
 
     eleccion = ''
@@ -121,7 +145,7 @@ def jugador_elige_movimiento(lista, numero):
         if ingreso in opciones:
             eleccion = ingreso
         else: gamelib.say(MENSAJE_ERROR_ELECCION_MOVIMIENTO)
-    #print ('97 |', eleccion)
+
     return eleccion
 
 
@@ -130,7 +154,7 @@ def calculadora_daño(movimiento, combatienteactua, combatientedefiende):
     Hace todos los calculos de daño, retorna el numero de daño hecho.
     """
     info = combatientedefiende.informacion() 
-    resultado = info[4] - 400 # DEBUG. REMPLAZAR EL 80 POR LO QUE HACE EL COMBATIENTE QUE ACTUA
+    resultado = info[4] - 50 # DEBUG. REMPLAZAR EL 80 POR LO QUE HACE EL COMBATIENTE QUE ACTUA
 
     combatientedefiende.herir(resultado)
 
@@ -139,7 +163,34 @@ def calculadora_efecto(movimiento, combatienteactua, combatientedefiende):
     """
     Hace todos los calculos de stat boost, retorna los efectos.
     """
-    pass
+    info_movimiento = lectores.detalles_movimiento(movimiento, ARCHIVO_DETALLE_MOVIMIENTOS)
+    stats_afectadas = info_movimiento['stats'].split(';')
+
+    if info_movimiento['objetivo'] == 'self':
+        for elemento in stats_afectadas:
+            if elemento == 'atk':
+                combatienteactua.stat_boost(True, False, False, False, False)
+            if elemento == 'def':
+                combatienteactua.stat_boost(False, True, False, False, False)
+            if elemento == 'speat':
+                combatienteactua.stat_boost(False, False, True, False, False)  # Los stat_boost de Special Attack  no existen, pero si se quisiese implementar es posible con estas lineas
+            if elemento == 'spedf':
+                combatienteactua.stat_boost(False, False, False, True, False)  # Los stat_boost de Special Defense no existen, pero si se quisiese implementar es posible con estas lineas
+            if elemento == 'spe':
+                combatienteactua.stat_boost(False, False, False, False, True)
+
+    if info_movimiento['objetivo'] == 'normal':
+        for elemento in stats_afectadas:
+            if elemento == 'atk':
+                combatientedefiende.stat_nerf(True, False, False, False, False)
+            if elemento == 'def':
+                combatientedefiende.stat_nerf(False, True, False, False, False)
+            if elemento == 'speat':
+                combatientedefiende.stat_nerf(False, False, True, False, False)  # Los stat_nerf de Special Attack  no existen, pero si se quisiese implementar es posible con estas lineas
+            if elemento == 'spedf':
+                combatientedefiende.stat_nerf(False, False, False, True, False)  # Los stat_nerf de Special Defense no existen, pero si se quisiese implementar es posible con estas lineas
+            if elemento == 'spe':
+                combatientedefiende.stat_nerf(False, False, False, False, True)
 
 
 def calculadora_sanacion(combatienteactua):
@@ -180,18 +231,30 @@ def calcular_movimiento(movimiento, combatienteactua, combatientedefiende):
     ataque, stat boost o sanación.
     """
     informacion = lectores.detalles_movimiento(movimiento, ARCHIVO_DETALLE_MOVIMIENTOS)
-    #print ('142 | ', informacion)
     if informacion['categoria'] == 'Special' or  informacion['categoria'] == 'Physical':
-        print ('Trigger daño')
         calculadora_daño(movimiento, combatienteactua, combatientedefiende)
+
     elif informacion['categoria'] == 'Status' and informacion['objetivo'] == 'self' and informacion['stats'] == '':
-        print ('Trigger sanacion')
         calculadora_sanacion(combatienteactua)
+
     elif informacion['categoria'] == 'Status':
-        print ('Trigger stat boost')
         calculadora_efecto(movimiento, combatienteactua, combatientedefiende)
+
     else:
         raise Exception('Error en calcular movimientos')
+
+
+def color_barra(porcentaje):
+    if porcentaje >= 0.8:
+        color = 'green'
+
+    if 0.3 < porcentaje < 0.8:
+        color = 'orange'
+        
+    if porcentaje <= 0.3:
+        color = 'red'
+    
+    return color
 
 
 def dibujar_combate(combatiente1, combatiente2, equipo_1, equipo_2, vivos_1, vivos_2):
@@ -204,42 +267,43 @@ def dibujar_combate(combatiente1, combatiente2, equipo_1, equipo_2, vivos_1, viv
     TITULO_Y = 70
     COLOR_AZUL = '#0d1364'
     MITAD_X = ANCHO_VENTANA // 2
-    ANCHO_RECTANGULO_HP = 80
-    #BARRA_HP_1_X = 
+    ANCHO_RECTANGULO_HP = 300
+    J1_X = 10
+    J1_Y = 200
+    J2_X = 550
+    J2_Y = 450
+    ALTO_BARRA_HP = 10
 
     info_combat_1 = combatiente1.informacion()
     info_combat_2 = combatiente2.informacion()
-    #print ('154 | ', info_combat_1, info_combat_2)
-    #print ('155 | ', info_combat_1[0])
     hp_combat_1_entera = int(lectores.lector_por_numero(info_combat_1[0], ARCHIVO_POKEMONES)[4]) + 110
     hp_combat_2_entera = int(lectores.lector_por_numero(info_combat_2[0], ARCHIVO_POKEMONES)[4]) + 110
     hp_combat_1_actual = info_combat_1[4]
     hp_combat_2_actual = info_combat_2[4]
     hp_pocentaje_1 = hp_combat_1_actual / hp_combat_1_entera
     hp_pocentaje_2 = hp_combat_2_actual / hp_combat_2_entera
-    color_1 = 'green'
-    color_2 = 'orange'
-    print ('199 |', hp_pocentaje_1, hp_pocentaje_2)
-    #hp_pocentaje_2 = 0.2 ###################### DEBUG
+    color_1 = color_barra(hp_pocentaje_1)
+    color_2 = color_barra(hp_pocentaje_2)
+    TEXTO_MOSTRAR_STATS = '{} {}, Tipo: {}, HP: {}, Ataque: {}, Defensa: {}, S-Ataque:{}, S-Defensa: {}, Velocidad: {}'
+    TEXTO_MOSTRAR_STATS_1 = TEXTO_MOSTRAR_STATS.format(info_combat_1[2], info_combat_1[0], info_combat_1[3], info_combat_1[4], info_combat_1[5], info_combat_1[6], info_combat_1[7], info_combat_1[8], info_combat_1[9])
+    TEXTO_MOSTRAR_STATS_2 = TEXTO_MOSTRAR_STATS.format(info_combat_2[2], info_combat_2[0], info_combat_2[3], info_combat_2[4], info_combat_2[5], info_combat_2[6], info_combat_2[7], info_combat_2[8], info_combat_2[9])
 
     gamelib.draw_begin()
-    gamelib.draw_rectangle(VACIO, VACIO, ANCHO_VENTANA, ALTO_VENTANA)  # FONDO BLANCO
+    gamelib.draw_rectangle(VACIO, VACIO, ANCHO_VENTANA + 10, ALTO_VENTANA + 10)  # FONDO BLANCO
     gamelib.draw_rectangle(VACIO, VACIO, ANCHO_VENTANA, FRANJA_AZUL_Y, fill=COLOR_AZUL)  # FRANJA SUPERIOR AZUL
     gamelib.draw_text('Equipo {} vs Equipo {}'.format(equipo_1[1], equipo_2[1]), MITAD_X, TITULO_Y, fill='white', size=30, anchor='s')  # TITULO
-    gamelib.draw_text('Jugador 1', 10, ALTO_VENTANA - 10, fill='black', anchor='w') #
-    gamelib.draw_text('Jugador 2', ANCHO_VENTANA, FRANJA_AZUL_Y, fill='black', anchor='ne') #
-    gamelib.draw_image(info_combat_1[1], 10, 240) #
-    gamelib.draw_image(info_combat_2[1], 500, FRANJA_AZUL_Y + 20) #
-    gamelib.draw_rectangle(10,  200, 10 +  ANCHO_RECTANGULO_HP, 200 + 10, fill='black') # BARRA HP TOTAL 1
-    gamelib.draw_rectangle(600, 450, 600 + ANCHO_RECTANGULO_HP, 450 + 10, fill='black') # BARRA HP TOTAL 2
-    gamelib.draw_rectangle(10,  200, 10 +  ANCHO_RECTANGULO_HP * hp_pocentaje_1, 200 + 10, fill=color_1) # BARRA HP RESTANTE 1
-    gamelib.draw_rectangle(600, 450, 600 + ANCHO_RECTANGULO_HP * hp_pocentaje_2, 450 + 10, fill=color_2) # BARRA HP RESTANTE 2
-    """
-    for i in range (len(vivos_1)):
-        gamelib.draw_image(i)
-    for i in range (len(vivos_2)):
-        gamelib.draw_image(i)
-    """
+    gamelib.draw_text('Jugador 1', 10, ALTO_VENTANA - 10, fill='red', anchor='w')  # TEXTO ESQUINA PARA CADA JUGADOR
+    gamelib.draw_text('Jugador 2', ANCHO_VENTANA, FRANJA_AZUL_Y + 5, fill=COLOR_AZUL, anchor='ne')  # TEXTO ESQUINA PARA CADA JUGADOR
+    gamelib.draw_text(TEXTO_MOSTRAR_STATS_1, 100, ALTO_VENTANA - 10, fill='red', anchor='w')  # TEXTO STATS J1
+    gamelib.draw_text(TEXTO_MOSTRAR_STATS_2, ANCHO_VENTANA - 100, FRANJA_AZUL_Y + 5, fill=COLOR_AZUL, anchor='ne')  # TEXTO STATS J2
+    gamelib.draw_text('HP: {}'.format(hp_combat_1_actual), J1_X, J1_Y - 20, fill='black', anchor='w')  # TEXTO NUMERO HP J1
+    gamelib.draw_text('HP: {}'.format(hp_combat_2_actual), J2_X, J2_Y + 20, fill='black', anchor='nw')  # TEXTO NUMERO HP J2
+    gamelib.draw_image(info_combat_1[1], 0, J1_Y + 40)  # IMAGEN POKEMON J1
+    gamelib.draw_image(info_combat_2[1], J2_X - 70, FRANJA_AZUL_Y + 40)  # IMAGEN POKEMON J2
+    gamelib.draw_rectangle(J1_X,  J1_Y, J1_X +  ANCHO_RECTANGULO_HP, J1_Y + ALTO_BARRA_HP, fill='black') # BARRA HP TOTAL 1
+    gamelib.draw_rectangle(J2_X, J2_Y, J2_X + ANCHO_RECTANGULO_HP, J2_Y + ALTO_BARRA_HP, fill='black') # BARRA HP TOTAL 2
+    gamelib.draw_rectangle(J1_X,  J1_Y, J1_X +  ANCHO_RECTANGULO_HP * hp_pocentaje_1, J1_Y + ALTO_BARRA_HP, fill=color_1) # BARRA HP RESTANTE 1
+    gamelib.draw_rectangle(J2_X, J2_Y, J2_X + ANCHO_RECTANGULO_HP * hp_pocentaje_2, J2_Y + ALTO_BARRA_HP, fill=color_2) # BARRA HP RESTANTE 2
 
     gamelib.draw_end()
 
@@ -253,16 +317,15 @@ def un_turno(combatiente1, combatiente2, equipo1, equipo2, vivos_1, vivos_2):
     movimiento_jug_1 = jugador_elige_movimiento(equipo1, (combatiente1.informacion())[0])
     movimiento_jug_2 = jugador_elige_movimiento(equipo2, (combatiente2.informacion())[0])
     mas_rapido = quien_primero(combatiente1, combatiente2)
+
     if mas_rapido == 1:
         calcular_movimiento(movimiento_jug_1, combatiente1, combatiente2)
         if not combatiente2.esta_vivo(): 
-            print ('A')
             return
         calcular_movimiento(movimiento_jug_2, combatiente2, combatiente1)
     if mas_rapido == 2:
         calcular_movimiento(movimiento_jug_2, combatiente2, combatiente1)
         if not combatiente1.esta_vivo(): 
-            print ('B')
             return 
         calcular_movimiento(movimiento_jug_1, combatiente1, combatiente2)
 
@@ -276,21 +339,16 @@ def desarrollo_combate(equipo1, equipo2):
     vivos_2 = lectores.extraer_integrantes_equipo(equipo2)
     eleccion1 = jugador_elige_pokemon(vivos_1)
     eleccion2 = jugador_elige_pokemon(vivos_2)
-    #print ('225 |', eleccion1, eleccion2)
-    #print ('226 |', equipo1, equipo2)
     combatiente1 = Combatiente(eleccion1, equipo1)
     combatiente2 = Combatiente(eleccion2, equipo2)
     contador_turno = 0
 
     while not len(vivos_1) == 0 and not len(vivos_2) == 0:
-        print ('263 |', len(vivos_1), len(vivos_2))
         un_turno(combatiente1, combatiente2, equipo1, equipo2, vivos_1, vivos_2)
         contador_turno += 1
-        print ('266 |', contador_turno, combatiente1.informacion(), combatiente2.informacion())
 
         if not combatiente1.esta_vivo():
             informacion = combatiente1.informacion()
-            print ('267 |', informacion, equipo1)
             vivos_1.remove(str(informacion[0]))
             equipo1.remove(str(informacion[0])) 
             if len(vivos_1) == 0:
@@ -307,8 +365,6 @@ def desarrollo_combate(equipo1, equipo2):
                 break
             combatiente2.reemplazar(jugador_elige_pokemon(vivos_2), equipo2)
             combatiente1.limpiar_stat_boost()
-
-    print ('279 |', vivos_1, vivos_2)
 
     if len(vivos_1) == 0:
         gamelib.say('Felicidades, ganó el jugador 2!')
