@@ -64,6 +64,5 @@ def detalles_tipos(tipo, archivo):
         reader = csv.DictReader(archivo, delimiter =';')
 
         for linea in reader:
-            print (linea)
             if linea['Types'] == tipo:
                 return linea

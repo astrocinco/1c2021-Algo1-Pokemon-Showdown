@@ -18,7 +18,6 @@ def main():
 
         if ev.type == prebatalla.gamelib.EventType.ButtonPress:
             x, y = ev.x, ev.y
-            print (juego)
             juego = prebatalla.navegacion(x, y, juego)
 
         if juego[0] == 'batalla':

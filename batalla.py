@@ -353,7 +353,6 @@ def dibujar_combate(combatiente1, combatiente2, equipo_1, equipo_2, vivos_1, viv
             color_vivos = 'green'
         if contador_color_1 >= len(vivos_1):
             color_vivos = 'red'
-        print (contador_color_1, len(vivos_1), color_vivos)
         gamelib.draw_oval(10, INICIO_ESFERAS_1 - (15 * i), 20, INICIO_ESFERAS_1 + 10 - (15 * i), fill=color_vivos)
         contador_color_1 += 1
 
@@ -363,7 +362,6 @@ def dibujar_combate(combatiente1, combatiente2, equipo_1, equipo_2, vivos_1, viv
             color_vivos = 'green'
         if contador_color_2 >= len(vivos_2):
             color_vivos = 'red'
-        print (contador_color_2, len(vivos_2), color_vivos)
         gamelib.draw_oval(ANCHO_VENTANA - 20, INICIO_ESFERAS_2 - (15 * i), ANCHO_VENTANA - 10, INICIO_ESFERAS_2 + 10 - (15 * i), fill=color_vivos)
         contador_color_2 += 1
 
@@ -422,7 +420,6 @@ def desarrollo_combate(equipo1, equipo2):
 
         elif not combatiente2.esta_vivo():
             informacion = combatiente2.informacion()
-            print ('273 |', informacion, equipo2)
             vivos_2.remove(str(informacion[0]))
             equipo2.remove(str(informacion[0])) 
             if len(vivos_2) == 0:
