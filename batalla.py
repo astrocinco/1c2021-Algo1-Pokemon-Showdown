@@ -153,10 +153,43 @@ def calculadora_daño(movimiento, combatienteactua, combatientedefiende):
     """
     Hace todos los calculos de daño, retorna el numero de daño hecho.
     """
-    info = combatientedefiende.informacion() 
-    resultado = info[4] - 50 # DEBUG. REMPLAZAR EL 80 POR LO QUE HACE EL COMBATIENTE QUE ACTUA
+    info_defensor = combatientedefiende.informacion()
+    info_atacante = combatienteactua.informacion()
+    tipo_atacante = info_atacante[3]
+    tipo_defensor = info_defensor[3]
+    ataque_simple= info_atacante[5]
+    SpAtaque_atacante = info_atacante[7]
+    defensa_simple = info_defensor[6]
+    SpDefensa_defensor = info_defensor[8]
 
-    combatientedefiende.herir(resultado)
+    special_or_not_atk = {}
+    special_or_not_dfe = {}
+    special_or_not_atk["damage"] = ataque_simple
+    special_or_not_dfe["defensa"] = defensa_simple
+    stab = {"multiplicador": 1}
+
+    poder_base_del_ataque = int(lectores.detalles_movimiento(movimiento, ARCHIVO_DETALLE_MOVIMIENTOS)["poder"]) 
+    type_movement = lectores.detalles_movimiento(movimiento, ARCHIVO_DETALLE_MOVIMIENTOS)["categoria"]
+    efectividad_values = lectores.detalles_tipos(tipo_atacante, ARCHIVO_TABLA_TIPOS)
+    efectividad = int(efectividad_values[tipo_defensor])
+   
+    if type_movement == "Special":
+        special_or_not_atk["damage"] = SpAtaque_atacante
+        special_or_not_dfe["defensa"] = SpDefensa_defensor
+    elif type_movement == "Physical":
+        special_or_not_atk["damage"] = ataque_simple
+        special_or_not_dfe["defensa"] = defensa_simple
+   
+    if type_movement == tipo_atacante:
+        stab["multiplicador": 1.5]
+
+    
+    base_damage = 15 * poder_base_del_ataque * (special_or_not_atk["damage"] / special_or_not_dfe["defensa"] / 50)
+    damage = base_damage * stab["multiplicador"] * efectividad
+    roll = random.randint(80, 101)
+    resultado = (info_defensor[4] - damage) * roll / 100
+
+    combatientedefiende.herir(int(resultado)) 
 
 
 def calculadora_efecto(movimiento, combatienteactua, combatientedefiende):

@@ -5,11 +5,6 @@ import lectores
 ANCHO_VENTANA = batalla.ANCHO_VENTANA
 ALTO_VENTANA = batalla.ALTO_VENTANA
 
-ARCHIVO1 = ''
-ARCHIVO2 = ''
-EQUIPO1 = ['', '']
-EQUIPO2 = ['', '']
-
 MENSAJE_INGRESE_RUTA = "Ingrese el nombre o la ruta en la que tiene sus equipos"
 MENSAJE_ERROR_RUTA = "No se encontró un archivo con ese nombre o ruta"
 MENSAJE_INGRESE_NRO_EQUIPO = "Ingrese el numero de equipo con el que va a jugar"
@@ -54,12 +49,10 @@ def menu_principio():
     gamelib.draw_text('COMENZAR', TEXTO_CENTRO_X, TEXTO_CENTRO_Y, fill='black', size=25, anchor='c')  # TEXTO "POKEMONES"
     gamelib.draw_end()
 
-    global MENU_MEMORIZADO
-    MENU_MEMORIZADO = 'menu_principio', '', ''
-    return MENU_MEMORIZADO
+    return 'menu_principio', '', '', ['', ''], ['', '']
 
 
-def menu_archivos():
+def menu_archivos(ARCHIVO1, ARCHIVO2, EQUIPO1, EQUIPO2):
     """
     Dibuja el menú de selección de archivos y equipos. Toma las elecciones de la variable global.
     """
@@ -89,9 +82,7 @@ def menu_archivos():
     gamelib.draw_text((EQUIPO2[1]), BE2X1, TEXTO_EQUIPOS_Y - BOTON_Y, fill='black', size=25, anchor='nw')  
     gamelib.draw_end()
 
-    global MENU_MEMORIZADO
-    MENU_MEMORIZADO = 'menu_archivos', '', ''
-    return MENU_MEMORIZADO
+    return 'menu_archivos', ARCHIVO1, ARCHIVO2, EQUIPO1, EQUIPO2
 
 
 def error():
@@ -114,18 +105,16 @@ def recibir_archivo_jugador(nro_jugador):
         with open(ingreso, "r") as equipo:
             lector_equipo = lectores.csv.reader(equipo)
             if nro_jugador == 1:
-                global ARCHIVO1
-                ARCHIVO1 = ingreso
+                return ingreso
             if nro_jugador == 2:
-                global ARCHIVO2
-                ARCHIVO2 = ingreso
+                return ingreso
     except:
         gamelib.say(MENSAJE_ERROR_RUTA)
 
 
-def recibir_equipo_jugador(nro_jugador):
+def recibir_equipo_jugador(nro_jugador, ARCHIVO1, ARCHIVO2):
     """
-    Recibe qué equipo quiere usar un jugador de todos los disponibles en el archivo eligido. Modifica la variable global el equipo que se eligió.
+    Recibe qué equipo quiere usar un jugador de todos los disponibles en el archivo eligido. 
     Se ingresa por parametro qué numero de jugador está eligiendo archivo.
     """
     try:
@@ -136,15 +125,13 @@ def recibir_equipo_jugador(nro_jugador):
         gamelib.say(MENSAJE_ERROR_EQUIPO_INVALIDO)
 
     if nro_jugador == 1:
-        global EQUIPO1
-        EQUIPO1 = lectores.lector_por_numero(int(equipo_elegido), ARCHIVO1)
+        return lectores.lector_por_numero(int(equipo_elegido), ARCHIVO1)
 
     if nro_jugador == 2:
-        global EQUIPO2
-        EQUIPO2 = lectores.lector_por_numero(int(equipo_elegido), ARCHIVO2)
+        return lectores.lector_por_numero(int(equipo_elegido), ARCHIVO2)
 
 
-def botones_seleccion_archivos(x, y):
+def botones_seleccion_archivos(x, y, ARCHIVO1, ARCHIVO2, EQUIPO1, EQUIPO2):
     """
     Según la posición del click recibido, elige el botón correcto y llama a la función.
     """
@@ -153,18 +140,18 @@ def botones_seleccion_archivos(x, y):
     BE1X1, BE1Y1, BE1X2, BE1Y2 = BOTON_EQUIPO1_X1, BOTON_EQUIPO1_Y1, BOTON_EQUIPO1_X2, BOTON_EQUIPO1_Y2  # EQUIPO 1
     BE2X1, BE2Y1, BE2X2, BE2Y2 = BOTON_EQUIPO2_X1, BOTON_EQUIPO2_Y1, BOTON_EQUIPO2_X2, BOTON_EQUIPO2_Y2  # EQUIPO 2
     if   BA1X1 < x < BA1X2 and BA1Y1 < y < BA1Y2:
-        recibir_archivo_jugador(1)
+        ARCHIVO1 = recibir_archivo_jugador(1)
     elif BA2X1 < x < BA2X2 and BA2Y1 < y < BA2Y2:
-        recibir_archivo_jugador(2)
+        ARCHIVO2 = recibir_archivo_jugador(2)
     elif BE1X1 < x < BE1X2 and BE1Y1 < y < BE1Y2:
-        recibir_equipo_jugador(1)
+        EQUIPO1 = recibir_equipo_jugador(1, ARCHIVO1, ARCHIVO2)
     elif BE2X1 < x < BE2X2 and BE2Y1 < y < BE2Y2:
-        recibir_equipo_jugador(2)
+        EQUIPO2 = recibir_equipo_jugador(2, ARCHIVO1, ARCHIVO2)
     elif SHOW_X1 < x < SHOW_X2 and SHOW_Y1 < y < SHOW_Y2:
         if not EQUIPO1 == ['', ''] and not EQUIPO2 == ['', '']:
             return "batalla", EQUIPO1, EQUIPO2 # AQUI LLAMA AL PROGRAMA DE COMBATE EN MAIN UNA VEZ SE TIENE DOS EQUIPOS 
         gamelib.say('No se eligieron dos equipos aún.') 
-    return menu_archivos()
+    return menu_archivos(ARCHIVO1, ARCHIVO2, EQUIPO1, EQUIPO2)
 
 
 def navegacion(x, y, juego):
@@ -173,11 +160,10 @@ def navegacion(x, y, juego):
     """
     if juego[0] == 'menu_principio':
         if BOTON_PRIMERMENU_X1 < x <  BOTON_PRIMERMENU_X2  and BOTON_PRIMERMENU_Y1 < y < BOTON_PRIMERMENU_Y2:
-            return menu_archivos()
+            return menu_archivos(juego[1], juego[2], juego[3], juego[4])
         return menu_principio()
 
     if juego[0] == 'menu_archivos':
-        return botones_seleccion_archivos(x, y)
-
+        return botones_seleccion_archivos(x, y, juego[1], juego[2], juego[3], juego[4])
 
     return error()
