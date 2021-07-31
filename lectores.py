@@ -13,11 +13,10 @@ def lector_por_numero(nro, nombre_archivo):
     
     with open(nombre_archivo) as archivo:
         for linea in archivo:
-            leido = linea
             contador += 1
 
             if contador == nro:
-                return leido[:-1].split(';')
+                return linea[:-1].split(';')
 
 
 def extraer_integrantes_equipo(equipo):

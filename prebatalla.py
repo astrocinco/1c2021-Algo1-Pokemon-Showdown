@@ -2,6 +2,14 @@ import gamelib
 import batalla
 import lectores
 
+"""
+class Equipo:
+    def __init__ (self, lista):
+        self.numero = lista[0]
+        self.nombre = lista[1]
+        self.vivos = [[X, M][X, M]] ###########################################
+"""
+
 ANCHO_VENTANA = batalla.ANCHO_VENTANA
 ALTO_VENTANA = batalla.ALTO_VENTANA
 
@@ -96,7 +104,7 @@ def error():
     gamelib.draw_end()
 
 
-def recibir_archivo_jugador(nro_jugador):
+def recibir_archivo_jugador():
     """
     Recibe qué archivo de equipos quiere usar un jugador.
     Se ingresa por parametro qué numero de jugador está eligiendo archivo.
@@ -106,10 +114,7 @@ def recibir_archivo_jugador(nro_jugador):
     try:
         with open(ingreso, "r") as equipo:
             lector_equipo = lectores.csv.reader(equipo)
-            if nro_jugador == 1:
-                return ingreso
-            if nro_jugador == 2:
-                return ingreso
+            return ingreso
     except:
         gamelib.say(MENSAJE_ERROR_RUTA)
 
@@ -142,9 +147,9 @@ def botones_seleccion_archivos(x, y, ARCHIVO1, ARCHIVO2, EQUIPO1, EQUIPO2):
     BE1X1, BE1Y1, BE1X2, BE1Y2 = BOTON_EQUIPO1_X1, BOTON_EQUIPO1_Y1, BOTON_EQUIPO1_X2, BOTON_EQUIPO1_Y2  # EQUIPO 1
     BE2X1, BE2Y1, BE2X2, BE2Y2 = BOTON_EQUIPO2_X1, BOTON_EQUIPO2_Y1, BOTON_EQUIPO2_X2, BOTON_EQUIPO2_Y2  # EQUIPO 2
     if   BA1X1 < x < BA1X2 and BA1Y1 < y < BA1Y2:
-        ARCHIVO1 = recibir_archivo_jugador(1)
+        ARCHIVO1 = recibir_archivo_jugador()
     elif BA2X1 < x < BA2X2 and BA2Y1 < y < BA2Y2:
-        ARCHIVO2 = recibir_archivo_jugador(2)
+        ARCHIVO2 = recibir_archivo_jugador()
     elif BE1X1 < x < BE1X2 and BE1Y1 < y < BE1Y2:
         EQUIPO1 = recibir_equipo_jugador(1, ARCHIVO1, ARCHIVO2)
     elif BE2X1 < x < BE2X2 and BE2Y1 < y < BE2Y2:
