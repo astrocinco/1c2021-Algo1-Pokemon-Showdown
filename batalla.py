@@ -52,7 +52,7 @@ class Combatiente:
         self.velocidad = int(stats[9])
         self.movimientos = lectores.movimiento_en_pokemon(lista, numero)
 
-    def stat_boost(self, ataque, defensa, speat, spedf, velocidad):
+    def stat_boost(self, ataque, defensa, speat, spedf, velocidad): # stat_boost_nerf
         """Boostea todos los atributos en los que recibe True"""
         if ataque:
             self.ataque = self.ataque * 2
@@ -65,7 +65,7 @@ class Combatiente:
         if velocidad:
             self.velocidad = self.velocidad * 2
 
-    def stat_nerf(self, ataque, defensa, speat, spedf, velocidad):
+    def stat_nerf(self, ataque, defensa, speat, spedf, velocidad): # stat_boost_nerf
         """Nerfea todos los atributos en los que recibe True"""
         if ataque:
             self.ataque = self.ataque // 2
@@ -91,11 +91,11 @@ class Combatiente:
         self.velocidad = int(stats[9])
 
     def curar(self, nueva_hp):
-        """Cambia la salud del pokemon por la ingresada."""
+        """Cambia la salud del pokemon por la ingresada.""" # HACER_DAÑO
         self.hp = nueva_hp
 
     def herir(self, nueva_hp):
-        """Cambia la salud del pokemon por la ingresada."""
+        """Cambia la salud del pokemon por la ingresada.""" # SANARSE
         self.hp = nueva_hp
 
     def informacion(self):
@@ -267,13 +267,18 @@ def calcular_movimiento(movimiento, combatienteactua, combatientedefiende):
     """
     informacion = lectores.detalles_movimiento(movimiento, ARCHIVO_DETALLE_MOVIMIENTOS)
     if informacion['categoria'] == 'Special' or  informacion['categoria'] == 'Physical':
-        calculadora_daño(movimiento, combatienteactua, combatientedefiende)
+        combatienteactua.hacer_daño(movimiento, combatientedefiende)    #### NUEVO
+        #calculadora_daño(movimiento, combatienteactua, combatientedefiende)
 
     elif informacion['categoria'] == 'Status' and informacion['objetivo'] == 'self' and informacion['stats'] == '':
-        calculadora_sanacion(combatienteactua)
+        combatienteactua.sanarse()  #### NUEVO
+        #calculadora_sanacion(combatienteactua)
 
     elif informacion['categoria'] == 'Status':
-        calculadora_efecto(movimiento, combatienteactua, combatientedefiende)
+        combatienteactua.stat_boost_nerf(movimiento, combatientedefiende)   #### NUEVO
+        #################### FIJARSE SI HACER DOS FUNCIONES SEPARADAS (UNA PARA NERF Y OTRA PARA BOOST) O 
+        #QUE LA DESICION SI ES NERF O BOOST SEA ADENTRO DEL OBJETO QUE ACTUA ###############
+        #calculadora_efecto(movimiento, combatienteactua, combatientedefiende)
 
     else:
         raise Exception('Error en calcular movimientos')
