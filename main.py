@@ -4,7 +4,7 @@ import batalla
 def main():
     prebatalla.gamelib.resize(prebatalla.ANCHO_VENTANA, prebatalla.ALTO_VENTANA)
     prebatalla.gamelib.title('Pokemon Showdown! De Arean y Langer - Selección de equipos')
-    juego = 'menu_principio', '', '', ['', ''], ['', '']
+    juego = 'menu_principio', '', '', '', ''
     prebatalla.menu_principio()
 
     while prebatalla.gamelib.is_alive():

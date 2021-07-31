@@ -397,6 +397,7 @@ def desarrollo_combate(equipo1, equipo2):
     Recibe las dos listas de equipos que eligieron los usuarios en prebatalla.py
     y desarrolla el combate. Termina cuando uno de los dos equipos se queda sin pokemones vivos
     """
+    print (equipo1)
     vivos_1 = lectores.extraer_integrantes_equipo(equipo1)
     vivos_2 = lectores.extraer_integrantes_equipo(equipo2)
     eleccion1 = jugador_elige_pokemon(vivos_1)

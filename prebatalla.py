@@ -49,7 +49,7 @@ def menu_principio():
     gamelib.draw_text('COMENZAR', TEXTO_CENTRO_X, TEXTO_CENTRO_Y, fill='black', size=25, anchor='c')  # TEXTO "POKEMONES"
     gamelib.draw_end()
 
-    return 'menu_principio', '', '', ['', ''], ['', '']
+    return 'menu_principio', '', '', '', ''
 
 
 def menu_archivos(ARCHIVO1, ARCHIVO2, EQUIPO1, EQUIPO2):
@@ -60,6 +60,10 @@ def menu_archivos(ARCHIVO1, ARCHIVO2, EQUIPO1, EQUIPO2):
     BA2X1, BA2Y1, BA2X2, BA2Y2 = BOTON_ARCHIVO2_X1, BOTON_ARCHIVO2_Y1, BOTON_ARCHIVO2_X2, BOTON_ARCHIVO2_Y2
     BE1X1, BE1Y1, BE1X2, BE1Y2 = BOTON_EQUIPO1_X1, BOTON_EQUIPO1_Y1, BOTON_EQUIPO1_X2, BOTON_EQUIPO1_Y2
     BE2X1, BE2Y1, BE2X2, BE2Y2 = BOTON_EQUIPO2_X1, BOTON_EQUIPO2_Y1, BOTON_EQUIPO2_X2, BOTON_EQUIPO2_Y2
+    TEXTO_NOMBRE_1 = ''
+    TEXTO_NOMBRE_2 = ''
+    if not EQUIPO1 == '': TEXTO_NOMBRE_1 = EQUIPO1[1]
+    if not EQUIPO2 == '': TEXTO_NOMBRE_2 = EQUIPO2[1]
 
     gamelib.draw_begin()
     gamelib.draw_rectangle(VACIO, VACIO, ANCHO_VENTANA, ALTO_VENTANA)  # FONDO BLANCO
@@ -78,8 +82,8 @@ def menu_archivos(ARCHIVO1, ARCHIVO2, EQUIPO1, EQUIPO2):
     gamelib.draw_text('¡SHOWDOWN!', MITAD_X - BOTON_X, BOTON_FIN_ARCHIVOS_Y - BOTON_Y, fill='black', size=25, anchor='nw')  # TEXTO "¡SHOWDOWN!"
     gamelib.draw_text((ARCHIVO1), BA1X1, TEXTO_ARCHIVOS_Y - BOTON_Y, fill='black', size=25, anchor='nw') 
     gamelib.draw_text((ARCHIVO2), BA2X1, TEXTO_ARCHIVOS_Y - BOTON_Y, fill='black', size=25, anchor='nw')  
-    gamelib.draw_text((EQUIPO1[1]), BE1X1, TEXTO_EQUIPOS_Y - BOTON_Y, fill='black', size=25, anchor='nw') 
-    gamelib.draw_text((EQUIPO2[1]), BE2X1, TEXTO_EQUIPOS_Y - BOTON_Y, fill='black', size=25, anchor='nw')  
+    gamelib.draw_text((TEXTO_NOMBRE_1), BE1X1, TEXTO_EQUIPOS_Y - BOTON_Y, fill='black', size=25, anchor='nw') 
+    gamelib.draw_text((TEXTO_NOMBRE_2), BE2X1, TEXTO_EQUIPOS_Y - BOTON_Y, fill='black', size=25, anchor='nw')  
     gamelib.draw_end()
 
     return 'menu_archivos', ARCHIVO1, ARCHIVO2, EQUIPO1, EQUIPO2
@@ -146,7 +150,7 @@ def botones_seleccion_archivos(x, y, ARCHIVO1, ARCHIVO2, EQUIPO1, EQUIPO2):
     elif BE2X1 < x < BE2X2 and BE2Y1 < y < BE2Y2:
         EQUIPO2 = recibir_equipo_jugador(2, ARCHIVO1, ARCHIVO2)
     elif SHOW_X1 < x < SHOW_X2 and SHOW_Y1 < y < SHOW_Y2:
-        if not EQUIPO1 == ['', ''] and not EQUIPO2 == ['', '']:
+        if not EQUIPO1 == '' and not EQUIPO2 == '':
             return "batalla", EQUIPO1, EQUIPO2 # AQUI LLAMA AL PROGRAMA DE COMBATE EN MAIN UNA VEZ SE TIENE DOS EQUIPOS 
         gamelib.say('No se eligieron dos equipos aún.') 
     return menu_archivos(ARCHIVO1, ARCHIVO2, EQUIPO1, EQUIPO2)
