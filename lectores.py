@@ -1,4 +1,5 @@
 import csv
+from tkinter.constants import E
 
 
 def lector_por_numero(nro, nombre_archivo):
@@ -7,9 +8,13 @@ def lector_por_numero(nro, nombre_archivo):
     El diccionario contiene toda la información de la linea solicitada como lista.
     Retorna la información de solo un pokemon.
     """
+    contador = -1
+
     if type(nro) is str:
         nro = int(nro)
-    contador = -1
+
+    if nro < 1:
+        return
     
     with open(nombre_archivo) as archivo:
         for linea in archivo:
@@ -17,6 +22,19 @@ def lector_por_numero(nro, nombre_archivo):
 
             if contador == nro:
                 return linea[:-1].split(';')
+
+
+def pokemon_y_movimiento_a_tuplas(equipo):
+    """
+    Recibe una linea del csv en forma de lista y retorna una lista con tuplas. 
+    Cada tupla tiene un par de elementos, un pokemon y sus movimientos.
+    """
+    resultado = []
+    for i in range(2, len(equipo), 2):
+        if equipo[i] == '': continue
+        resultado.append((equipo[i], equipo[i+1]))
+
+    return resultado
 
 
 def extraer_integrantes_equipo(equipo):
