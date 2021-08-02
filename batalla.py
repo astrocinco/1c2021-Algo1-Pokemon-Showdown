@@ -248,6 +248,7 @@ def calcular_movimiento(movimiento, combatienteactua, combatientedefiende):
     """
     informacion = lectores.lector_por_nombre(movimiento, ARCHIVO_DETALLE_MOVIMIENTOS)
     if informacion['categoria'] == 'Special' or  informacion['categoria'] == 'Physical':
+        #combatientedefiende.herir(combatientedefiende.hp - 20) # DEBUG
         combatienteactua.hacer_daño(combatientedefiende, movimiento)    #### NUEVO HCER
 
     elif informacion['categoria'] == 'Status' and informacion['objetivo'] == 'self' and informacion['stats'] == '':
@@ -302,8 +303,8 @@ def dibujar_combate(combatiente1, combatiente2, equipo_1, equipo_2):
     color_1 = color_barra(hp_pocentaje_1)
     color_2 = color_barra(hp_pocentaje_2)
     TEXTO_MOSTRAR_STATS = '{} {}, Tipo: {}, HP: {}, Ataque: {}, Defensa: {}, S-Ataque:{}, S-Defensa: {}, Velocidad: {}'
-    TEXTO_MOSTRAR_STATS_1 = TEXTO_MOSTRAR_STATS.format(combatiente1.nombre, combatiente1.nombre, combatiente1.tipos, combatiente1.hp, combatiente1.ataque, combatiente1.defensa, combatiente1.speat, combatiente1.spedf, combatiente1.velocidad)
-    TEXTO_MOSTRAR_STATS_2 = TEXTO_MOSTRAR_STATS.format(combatiente2.nombre, combatiente2.nombre, combatiente2.tipos, combatiente2.hp, combatiente2.ataque, combatiente2.defensa, combatiente2.speat, combatiente2.spedf, combatiente2.velocidad)
+    TEXTO_MOSTRAR_STATS_1 = TEXTO_MOSTRAR_STATS.format(combatiente1.nombre, combatiente1.numero, combatiente1.tipos, combatiente1.hp, combatiente1.ataque, combatiente1.defensa, combatiente1.speat, combatiente1.spedf, combatiente1.velocidad)
+    TEXTO_MOSTRAR_STATS_2 = TEXTO_MOSTRAR_STATS.format(combatiente2.nombre, combatiente2.numero, combatiente2.tipos, combatiente2.hp, combatiente2.ataque, combatiente2.defensa, combatiente2.speat, combatiente2.spedf, combatiente2.velocidad)
 
     gamelib.draw_begin()
     gamelib.draw_rectangle(VACIO, VACIO, ANCHO_VENTANA + 10, ALTO_VENTANA + 10)  # FONDO BLANCO
