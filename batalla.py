@@ -17,7 +17,7 @@ MENSAJE_ERROR_ELECCION_MOVIMIENTO = 'No eligió correctamente su pŕoximo movmie
 
 class Combatiente:
     def __init__(self, par):
-        """Crea por primera vez un combatiente, recibiendo su número y sus movimientos disponibles.""" # numero;imagen;nombre;tipos;hp;atk;def;spa;spd;spe
+        """Crea por primera vez un combatiente, recibiendo su número y sus movimientos disponibles.""" 
         stats = lectores.lector_por_numero(par[0], ARCHIVO_POKEMONES)
         self.numero = par[0]
         self.imagen = stats['imagen']
@@ -31,7 +31,6 @@ class Combatiente:
         self.spedf = int(stats['spd'])
         self.velocidad = int(stats['spe'])
         self.movimientos = par[1]
-        #self.movimientos = lectores.movimiento_en_pokemon(lista, numero)
 
     def __str__(self):
         return self.numero, self.imagen, self.nombre, self.tipos, self.hp, self.ataque, self.defensa, self.speat, self.spedf, self.velocidad, self.movimientos
@@ -41,22 +40,6 @@ class Combatiente:
         if self.hp > 0:
             return True
         else: return False
-
-    """
-    def reemplazar(self, numero, lista):
-        stats = lectores.lector_por_numero(numero, ARCHIVO_POKEMONES)
-        self.numero = int(stats[0])
-        self.imagen = stats[1]
-        self.nombre = stats[2]
-        self.tipos = stats[3]
-        self.hp = int(stats[4]) + 110
-        self.ataque = int(stats[5])
-        self.defensa = int(stats[6])
-        self.speat = int(stats[7])
-        self.spedf = int(stats[8])
-        self.velocidad = int(stats[9])
-        self.movimientos = lectores.movimiento_en_pokemon(lista, numero)
-    """
 
     def stat_boost(self, ataque, defensa, speat, spedf, velocidad): # stat_boost_nerf
         """Boostea todos los atributos en los que recibe True"""
@@ -108,7 +91,6 @@ class Combatiente:
         """Retorna todos los atributos del pokemon en juego."""
         return self.numero, self.imagen, self.nombre, self.tipos, self.hp, self.ataque, self.defensa, self.speat, self.spedf, self.velocidad, self.movimientos
 
-
     def calculadora_daño(self, combatiendedefiende , movimiento):
         """
         Hace todos los calculos de daño, retorna el numero de daño hecho.
@@ -126,8 +108,8 @@ class Combatiente:
         special_or_not_dfe["defensa"] = defensa_simple
         stab = {"multiplicador": 1}
 
-        poder_base_del_ataque = int(lectores.detalles_movimiento(movimiento, ARCHIVO_DETALLE_MOVIMIENTOS)["poder"]) 
-        type_movement = lectores.detalles_movimiento(movimiento, ARCHIVO_DETALLE_MOVIMIENTOS)["categoria"]
+        poder_base_del_ataque = int(lectores.lector_por_nombre(movimiento, ARCHIVO_DETALLE_MOVIMIENTOS)["poder"]) 
+        type_movement = lectores.lector_por_nombre(movimiento, ARCHIVO_DETALLE_MOVIMIENTOS)["categoria"]
         efectividad_values = lectores.detalles_tipos(tipo_atacante, ARCHIVO_TABLA_TIPOS)
         efectividad = int(efectividad_values[tipo_defensor])
     
@@ -141,7 +123,6 @@ class Combatiente:
         if type_movement == tipo_atacante:
             stab["multiplicador": 1.5]
 
-        
         base_damage = 15 * poder_base_del_ataque * (special_or_not_atk["damage"] / special_or_not_dfe["defensa"] / 50)
         damage = base_damage * stab["multiplicador"] * efectividad
         roll = random.randint(80, 101)
@@ -161,6 +142,7 @@ class Combatiente:
 
         self.hp = resultado
 
+
 def numero_a_nombre(nro):
     """
     Recibe el número de un pokemon y retorna su nombre en string.
@@ -178,8 +160,6 @@ def jugador_elige_pokemon(equipo):
     lista_en_nombres = []
     for par in equipo.pokmov:
         lista_en_nombres.append((numero_a_nombre(par[0]), par[0]))
-    #for i in range (len(equipo.pokmov)):
-     #   lista_en_nombres.append([numero_a_nombre(int(equipo.pokmov[]lista[i])), lista[i]])
 
     while True:
         ingreso = gamelib.input(MENSAJE_ELIJA_PROX_COMBATIENTE.format(lista_en_nombres))
@@ -195,7 +175,6 @@ def jugador_elige_movimiento(combatiente):
     y retorna el movimiento que elegió el usuario para ese pokemon
     """
     eleccion = ''
-    #opciones = lectores.movimiento_en_pokemon(lista, numero)
 
     while eleccion == '':
         ingreso = gamelib.input(MENSAJE_ELIJA_MOVIMIENTO.format(combatiente.nombre, combatiente.movimientos))
@@ -209,13 +188,11 @@ def jugador_elige_movimiento(combatiente):
     return eleccion
 
 
-
-
 def calculadora_efecto(movimiento, combatienteactua, combatientedefiende):
     """
     Hace todos los calculos de stat boost, retorna los efectos.
     """
-    info_movimiento = lectores.detalles_movimiento(movimiento, ARCHIVO_DETALLE_MOVIMIENTOS)
+    info_movimiento = lectores.lector_por_nombre(movimiento, ARCHIVO_DETALLE_MOVIMIENTOS)
     stats_afectadas = info_movimiento['stats'].split(';')
 
     if info_movimiento['objetivo'] == 'self':
@@ -245,8 +222,6 @@ def calculadora_efecto(movimiento, combatienteactua, combatientedefiende):
                 combatientedefiende.stat_nerf(False, False, False, False, True)
 
 
-
-
 def quien_primero(combatiente1, combatiente2):
     """
     Recibiendo los dos combatientes, decide cuál mueve primero según cuál tiene mayor velocidad.
@@ -271,20 +246,15 @@ def calcular_movimiento(movimiento, combatienteactua, combatientedefiende):
     y define a qué calculadora se debe llamar según si el movimiento es de tipo
     ataque, stat boost o sanación.
     """
-    informacion = lectores.detalles_movimiento(movimiento, ARCHIVO_DETALLE_MOVIMIENTOS)
+    informacion = lectores.lector_por_nombre(movimiento, ARCHIVO_DETALLE_MOVIMIENTOS)
     if informacion['categoria'] == 'Special' or  informacion['categoria'] == 'Physical':
-        combatienteactua.hacer_daño(combatientedefiende, movimiento)    #### NUEVO
-        #calculadora_daño(movimiento, combatienteactua, combatientedefiende)
+        combatienteactua.hacer_daño(combatientedefiende, movimiento)    #### NUEVO HCER
 
     elif informacion['categoria'] == 'Status' and informacion['objetivo'] == 'self' and informacion['stats'] == '':
-        combatienteactua.sanarse()  #### NUEVO
-        #calculadora_sanacion(combatienteactua)
+        combatienteactua.sanarse()  #### NUEVO HACER
 
     elif informacion['categoria'] == 'Status':
-        combatienteactua.stat_boost_nerf(movimiento, combatientedefiende)   #### NUEVO
-        #################### FIJARSE SI HACER DOS FUNCIONES SEPARADAS (UNA PARA NERF Y OTRA PARA BOOST) O 
-        #QUE LA DESICION SI ES NERF O BOOST SEA ADENTRO DEL OBJETO QUE ACTUA ###############
-        #calculadora_efecto(movimiento, combatienteactua, combatientedefiende)
+        combatienteactua.stat_boost_nerf(movimiento, combatientedefiende)   
 
     else:
         raise Exception('Error en calcular movimientos')
@@ -304,7 +274,7 @@ def color_barra(porcentaje):
     return color
 
 
-def dibujar_combate(combatiente1, combatiente2, equipo_1, equipo_2): #############################################
+def dibujar_combate(combatiente1, combatiente2, equipo_1, equipo_2): 
     """
     Dibuja el estado del combate al principio del turno, para que los usuarios puedan elegir que hacer a continuación según
     cómo ven que están sus pokemones en juego.
@@ -323,12 +293,6 @@ def dibujar_combate(combatiente1, combatiente2, equipo_1, equipo_2): ###########
     INICIO_ESFERAS_1 = 550
     INICIO_ESFERAS_2 = 210
 
-    #info_combat_1 = combatiente1.informacion()
-    #info_combat_2 = combatiente2.informacion()
-    #hp_combat_1_entera = int(lectores.lector_por_numero(info_combat_1[0], ARCHIVO_POKEMONES)[4]) + 110
-    #hp_combat_2_entera = int(lectores.lector_por_numero(info_combat_2[0], ARCHIVO_POKEMONES)[4]) + 110
-    #hp_combat_1_actual = info_combat_1[4]
-    #hp_combat_2_actual = info_combat_2[4]
     hp_pocentaje_1 = combatiente1.hp / combatiente1.hpmax
     hp_pocentaje_2 = combatiente2.hp / combatiente2.hpmax
     if hp_pocentaje_1 < 0.0:
@@ -379,12 +343,12 @@ def dibujar_combate(combatiente1, combatiente2, equipo_1, equipo_2): ###########
     gamelib.draw_end()
 
 
-def un_turno(combatiente1, combatiente2, equipo1, equipo2): #####################################################
+def un_turno(combatiente1, combatiente2, equipo1, equipo2): 
     """
     Desarrolla un turno. Llama a dibujar el estado actual del combate, luego permite a los usuarios elegir sus movimientos.
     Calcula quien mueve primero y luego llama a las funciones calculadoras de daño, efecto y sanacion.
     """
-    dibujar_combate(combatiente1, combatiente2, equipo1, equipo2) ###############################
+    dibujar_combate(combatiente1, combatiente2, equipo1, equipo2) 
     movimiento_jug_1 = jugador_elige_movimiento(combatiente1)
     movimiento_jug_2 = jugador_elige_movimiento(combatiente2)
     mas_rapido = quien_primero(combatiente1, combatiente2)
@@ -408,12 +372,7 @@ def desarrollo_combate(equipo1, equipo2):
     Recibe las dos listas de equipos que eligieron los usuarios en prebatalla.py
     y desarrolla el combate. Termina cuando uno de los dos equipos se queda sin pokemones vivos
     """
-    print (equipo1)
-    #vivos_1 = lectores.extraer_integrantes_equipo(equipo1)
-    #vivos_2 = lectores.extraer_integrantes_equipo(equipo2)
-    #eleccion1 = jugador_elige_pokemon(equipo1)
-    #eleccion2 = jugador_elige_pokemon(equipo2)
-    combatiente1 = Combatiente(jugador_elige_pokemon(equipo1)) # QUE DEVUELVA EL PAR DE POK Y MOVIMIENTO
+    combatiente1 = Combatiente(jugador_elige_pokemon(equipo1)) 
     combatiente2 = Combatiente(jugador_elige_pokemon(equipo2))
     contador_turno = 0
 
@@ -422,36 +381,20 @@ def desarrollo_combate(equipo1, equipo2):
         contador_turno += 1
 
         if not combatiente1.esta_vivo():
-            #informacion = combatiente1.informacion()
             equipo1.eliminar_pokemon_derrotado(combatiente1)
-            #vivos_1.remove(str(informacion[0]))
-            #equipo1.remove(str(informacion[0])) 
             if len(equipo1.pokmov) == 0:
                 break
+
             combatiente1 = Combatiente(jugador_elige_pokemon(equipo1))
-            #combatiente1.reemplazar(jugador_elige_pokemon(vivos_1), equipo1)
             combatiente2.limpiar_stat_boost()
 
         elif not combatiente2.esta_vivo():
-            #informacion = combatiente2.informacion()
             equipo2.eliminar_pokemon_derrotado(combatiente2)
-            #vivos_1.remove(str(informacion[0]))
-            #equipo1.remove(str(informacion[0])) 
             if len(equipo2.pokmov) == 0:
                 break
+
             combatiente2 = Combatiente(jugador_elige_pokemon(equipo2))
-            #combatiente1.reemplazar(jugador_elige_pokemon(vivos_1), equipo1)
             combatiente1.limpiar_stat_boost()
-            """
-        elif not combatiente2.esta_vivo():
-            informacion = combatiente2.informacion()
-            vivos_2.remove(str(informacion[0]))
-            equipo2.remove(str(informacion[0])) 
-            if len(vivos_2) == 0:
-                break
-            combatiente2.reemplazar(jugador_elige_pokemon(vivos_2), equipo2)
-            combatiente1.limpiar_stat_boost()
-            """
 
     if len(equipo1.pokmov) == 0:
         gamelib.say('Felicidades, ganó el jugador 2!')
