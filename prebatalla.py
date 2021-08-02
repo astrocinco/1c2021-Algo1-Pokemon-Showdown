@@ -36,10 +36,19 @@ SHOW_X1, SHOW_Y1, SHOW_X2, SHOW_Y2 = MITAD_X - BOTON_X, BOTON_FIN_ARCHIVOS_Y - B
 
 
 class ClaseEquipo():
-    def __init__(self, lista):
-        self.numero = lista[0]
-        self.nombre = lista[1]
-        self.pokmov = lectores.pokemon_y_movimiento_a_tuplas(lista)
+    def __init__(self, diccionario):
+        self.numero = diccionario['numero']
+        self.nombre = diccionario['equipo_nombre']
+        self.pokmov = lectores.pokemon_y_movimiento_a_tuplas(diccionario)
+
+    def __str__(self):
+        return 'Equipo número {}. Nombre {}. Pares de pokemones con sus movimientos {}'.format(self.numero, self.nombre, self.pokmov)
+
+    def eliminar_pokemon_derrotado(self, derrotado):
+        for par in self.pokmov:
+            print (self.pokmov, par)
+            if par[0] == derrotado.numero:
+                self.pokmov.remove(par)
 
 
 def menu_principio():
@@ -72,8 +81,8 @@ def menu_archivos(ARCHIVO1, ARCHIVO2, EQUIPO1, EQUIPO2):
     BE2X1, BE2Y1, BE2X2, BE2Y2 = BOTON_EQUIPO2_X1, BOTON_EQUIPO2_Y1, BOTON_EQUIPO2_X2, BOTON_EQUIPO2_Y2
     TEXTO_NOMBRE_1 = ''
     TEXTO_NOMBRE_2 = ''
-    if not EQUIPO1 == '': TEXTO_NOMBRE_1 = EQUIPO1[1]
-    if not EQUIPO2 == '': TEXTO_NOMBRE_2 = EQUIPO2[1]
+    if not EQUIPO1 == '': TEXTO_NOMBRE_1 = EQUIPO1['equipo_nombre']
+    if not EQUIPO2 == '': TEXTO_NOMBRE_2 = EQUIPO2['equipo_nombre']
 
     gamelib.draw_begin()
     gamelib.draw_rectangle(VACIO, VACIO, ANCHO_VENTANA, ALTO_VENTANA)  # FONDO BLANCO

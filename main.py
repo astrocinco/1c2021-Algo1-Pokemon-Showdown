@@ -22,6 +22,7 @@ def main():
 
         if juego[0] == 'batalla':
                 batalla.gamelib.title('Pokemon Showdown! De Arean y Langer - Combate')
+                print (juego)
                 batalla.desarrollo_combate(juego[1], juego[2]) 
 
 prebatalla.gamelib.init(main) 

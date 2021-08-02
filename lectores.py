@@ -8,6 +8,19 @@ def lector_por_numero(nro, nombre_archivo):
     El diccionario contiene toda la información de la linea solicitada como lista.
     Retorna la información de solo un pokemon.
     """
+    if type(nro) is int:
+        nro = str(nro)
+
+    with open(nombre_archivo) as archivo:
+        reader = csv.DictReader(archivo, delimiter=';')
+
+        for linea in reader:
+            #print (linea['numero'], type(linea['numero']), nro, type(nro))
+            if linea['numero'] == nro:
+                return linea
+        #raise Exception ('El movimiento no fue encontrado en el archivo.')
+
+    """
     contador = -1
 
     if type(nro) is str:
@@ -22,7 +35,7 @@ def lector_por_numero(nro, nombre_archivo):
 
             if contador == nro:
                 return linea[:-1].split(';')
-
+    """
 
 def pokemon_y_movimiento_a_tuplas(equipo):
     """
@@ -30,9 +43,13 @@ def pokemon_y_movimiento_a_tuplas(equipo):
     Cada tupla tiene un par de elementos, un pokemon y sus movimientos.
     """
     resultado = []
-    for i in range(2, len(equipo), 2):
-        if equipo[i] == '': continue
-        resultado.append((equipo[i], equipo[i+1]))
+    encabezados = ('integrante1', 'movimientos1'), ('integrante2', 'movimientos2'), ('integrante3', 'movimientos3'), ('integrante4', 'movimientos4'), ('integrante5', 'movimientos5'), ('integrante6', 'movimientos6')
+    for elemento in encabezados:
+        if elemento[0] in equipo:
+            resultado.append((equipo[elemento[0]], equipo[elemento[1]]))
+    #for i in range(2, len(equipo), 2):
+     #   if equipo[i] == '': continue
+      #  resultado.append((equipo[i], equipo[i+1]))
 
     return resultado
 
@@ -74,12 +91,3 @@ def detalles_tipos(tipo, archivo):
             if linea['Types'] == tipo:
                 return linea
         raise Exception ('El movimiento no fue encontrado en el archivo.')
-
-
-def detalles_tipos(tipo, archivo):
-    with open(archivo) as archivo:
-        reader = csv.DictReader(archivo, delimiter =';')
-
-        for linea in reader:
-            if linea['Types'] == tipo:
-                return linea
