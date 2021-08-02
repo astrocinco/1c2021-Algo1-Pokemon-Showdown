@@ -109,6 +109,58 @@ class Combatiente:
         return self.numero, self.imagen, self.nombre, self.tipos, self.hp, self.ataque, self.defensa, self.speat, self.spedf, self.velocidad, self.movimientos
 
 
+    def calculadora_daño(self, combatiendedefiende , movimiento):
+        """
+        Hace todos los calculos de daño, retorna el numero de daño hecho.
+        """
+        tipo_atacante = self.tipos
+        tipo_defensor = combatiendedefiende.tipos
+        ataque_simple= self.ataque
+        SpAtaque_atacante = self.speat
+        defensa_simple = self.defensa
+        SpDefensa_defensor = combatiendedefiende.spedf
+
+        special_or_not_atk = {}
+        special_or_not_dfe = {}
+        special_or_not_atk["damage"] = ataque_simple
+        special_or_not_dfe["defensa"] = defensa_simple
+        stab = {"multiplicador": 1}
+
+        poder_base_del_ataque = int(lectores.detalles_movimiento(movimiento, ARCHIVO_DETALLE_MOVIMIENTOS)["poder"]) 
+        type_movement = lectores.detalles_movimiento(movimiento, ARCHIVO_DETALLE_MOVIMIENTOS)["categoria"]
+        efectividad_values = lectores.detalles_tipos(tipo_atacante, ARCHIVO_TABLA_TIPOS)
+        efectividad = int(efectividad_values[tipo_defensor])
+    
+        if type_movement == "Special":
+            special_or_not_atk["damage"] = SpAtaque_atacante
+            special_or_not_dfe["defensa"] = SpDefensa_defensor
+        elif type_movement == "Physical":
+            special_or_not_atk["damage"] = ataque_simple
+            special_or_not_dfe["defensa"] = defensa_simple
+    
+        if type_movement == tipo_atacante:
+            stab["multiplicador": 1.5]
+
+        
+        base_damage = 15 * poder_base_del_ataque * (special_or_not_atk["damage"] / special_or_not_dfe["defensa"] / 50)
+        damage = base_damage * stab["multiplicador"] * efectividad
+        roll = random.randint(80, 101)
+        resultado = (combatiendedefiende.hp - damage) * roll / 100
+
+        combatiendedefiende.hp =- resultado
+
+    def calculadora_sanacion(self):
+        """
+        Al ser llamada, calcula cuánto debe ser sanado un pokemon.
+        """
+        info = self.informacion()
+        max_hp_posible = int((lectores.lector_por_numero(int(info[0]), ARCHIVO_POKEMONES))[4]) + 110
+        resultado = self.hp + max_hp_posible // 2
+        if resultado > max_hp_posible:
+            resultado = max_hp_posible
+
+        self.hp = resultado
+
 def numero_a_nombre(nro):
     """
     Recibe el número de un pokemon y retorna su nombre en string.
@@ -157,47 +209,6 @@ def jugador_elige_movimiento(combatiente):
     return eleccion
 
 
-def calculadora_daño(movimiento, combatienteactua, combatientedefiende):
-    """
-    Hace todos los calculos de daño, retorna el numero de daño hecho.
-    """
-    info_defensor = combatientedefiende.informacion()
-    info_atacante = combatienteactua.informacion()
-    tipo_atacante = info_atacante[3]
-    tipo_defensor = info_defensor[3]
-    ataque_simple= info_atacante[5]
-    SpAtaque_atacante = info_atacante[7]
-    defensa_simple = info_defensor[6]
-    SpDefensa_defensor = info_defensor[8]
-
-    special_or_not_atk = {}
-    special_or_not_dfe = {}
-    special_or_not_atk["damage"] = ataque_simple
-    special_or_not_dfe["defensa"] = defensa_simple
-    stab = {"multiplicador": 1}
-
-    poder_base_del_ataque = int(lectores.detalles_movimiento(movimiento, ARCHIVO_DETALLE_MOVIMIENTOS)["poder"]) 
-    type_movement = lectores.detalles_movimiento(movimiento, ARCHIVO_DETALLE_MOVIMIENTOS)["categoria"]
-    efectividad_values = lectores.detalles_tipos(tipo_atacante, ARCHIVO_TABLA_TIPOS)
-    efectividad = int(efectividad_values[tipo_defensor])
-   
-    if type_movement == "Special":
-        special_or_not_atk["damage"] = SpAtaque_atacante
-        special_or_not_dfe["defensa"] = SpDefensa_defensor
-    elif type_movement == "Physical":
-        special_or_not_atk["damage"] = ataque_simple
-        special_or_not_dfe["defensa"] = defensa_simple
-   
-    if type_movement == tipo_atacante:
-        stab["multiplicador": 1.5]
-
-    
-    base_damage = 15 * poder_base_del_ataque * (special_or_not_atk["damage"] / special_or_not_dfe["defensa"] / 50)
-    damage = base_damage * stab["multiplicador"] * efectividad
-    roll = random.randint(80, 101)
-    resultado = (info_defensor[4] - damage) * roll / 100
-
-    combatientedefiende.herir(int(resultado)) 
 
 
 def calculadora_efecto(movimiento, combatienteactua, combatientedefiende):
@@ -234,17 +245,6 @@ def calculadora_efecto(movimiento, combatienteactua, combatientedefiende):
                 combatientedefiende.stat_nerf(False, False, False, False, True)
 
 
-def calculadora_sanacion(combatienteactua):
-    """
-    Al ser llamada, calcula cuánto debe ser sanado un pokemon.
-    """
-    info = combatienteactua.informacion()
-    max_hp_posible = int((lectores.lector_por_numero(int(info[0]), ARCHIVO_POKEMONES))[4]) + 110
-    resultado = info[4] + max_hp_posible // 2
-    if resultado > max_hp_posible:
-        resultado = max_hp_posible
-
-    combatienteactua.curar(resultado)
 
 
 def quien_primero(combatiente1, combatiente2):
@@ -273,7 +273,7 @@ def calcular_movimiento(movimiento, combatienteactua, combatientedefiende):
     """
     informacion = lectores.detalles_movimiento(movimiento, ARCHIVO_DETALLE_MOVIMIENTOS)
     if informacion['categoria'] == 'Special' or  informacion['categoria'] == 'Physical':
-        combatienteactua.hacer_daño(movimiento, combatientedefiende)    #### NUEVO
+        combatienteactua.hacer_daño(combatientedefiende, movimiento)    #### NUEVO
         #calculadora_daño(movimiento, combatienteactua, combatientedefiende)
 
     elif informacion['categoria'] == 'Status' and informacion['objetivo'] == 'self' and informacion['stats'] == '':
