@@ -15,7 +15,7 @@ MENSAJE_ELIJA_MOVIMIENTO = 'Elija que movimiento usará {} en este turno. Tienes
 MENSAJE_ERROR_ELECCION_MOVIMIENTO = 'No eligió correctamente su pŕoximo movmiento. Inténtalo de nuevo'
 
 
-class Combatiente:
+class ClasePokemon:
     def __init__(self, par):
         """Crea por primera vez un combatiente, recibiendo su número y sus movimientos disponibles.""" 
         stats = lectores.lector_por_numero(par[0], ARCHIVO_POKEMONES)
@@ -373,8 +373,8 @@ def desarrollo_combate(equipo1, equipo2):
     Recibe las dos listas de equipos que eligieron los usuarios en prebatalla.py
     y desarrolla el combate. Termina cuando uno de los dos equipos se queda sin pokemones vivos
     """
-    combatiente1 = Combatiente(jugador_elige_pokemon(equipo1)) 
-    combatiente2 = Combatiente(jugador_elige_pokemon(equipo2))
+    combatiente1 = ClasePokemon(jugador_elige_pokemon(equipo1)) 
+    combatiente2 = ClasePokemon(jugador_elige_pokemon(equipo2))
     contador_turno = 0
 
     while not len(equipo1.pokmov) == 0 and not len(equipo2.pokmov) == 0:
@@ -386,7 +386,7 @@ def desarrollo_combate(equipo1, equipo2):
             if len(equipo1.pokmov) == 0:
                 break
 
-            combatiente1 = Combatiente(jugador_elige_pokemon(equipo1))
+            combatiente1 = ClasePokemon(jugador_elige_pokemon(equipo1))
             combatiente2.limpiar_stat_boost()
 
         elif not combatiente2.esta_vivo():
@@ -394,7 +394,7 @@ def desarrollo_combate(equipo1, equipo2):
             if len(equipo2.pokmov) == 0:
                 break
 
-            combatiente2 = Combatiente(jugador_elige_pokemon(equipo2))
+            combatiente2 = ClasePokemon(jugador_elige_pokemon(equipo2))
             combatiente1.limpiar_stat_boost()
 
     if len(equipo1.pokmov) == 0:
