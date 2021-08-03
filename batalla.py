@@ -19,10 +19,12 @@ class ClasePokemon:
     def __init__(self, par):
         """Crea por primera vez un combatiente, recibiendo su número y sus movimientos disponibles.""" 
         stats = lectores.lector_por_numero(par[0], ARCHIVO_POKEMONES)
+        lista_tipos = (stats['tipos']).split(',')
+
         self.numero = par[0]
         self.imagen = stats['imagen']
         self.nombre = stats['nombre']
-        self.tipos = stats['tipos']
+        self.tipos = lista_tipos[0]
         self.hp = int(stats['hp']) + 110
         self.hpmax = int(stats['hp']) + 110
         self.ataque = int(stats['atk'])
@@ -41,60 +43,36 @@ class ClasePokemon:
             return True
         else: return False
 
-    def stat_boost(self, ataque, defensa, speat, spedf, velocidad): # stat_boost_nerf
-        """Boostea todos los atributos en los que recibe True"""
-        if ataque:
-            self.ataque = self.ataque * 2
-        if defensa:
-            self.defensa = self.defensa * 2
-        if speat:
-            self.speat = self.speat * 2
-        if spedf:
-            self.spedf = self.spedf * 2
-        if velocidad:
-            self.velocidad = self.velocidad * 2
-
-    def stat_nerf(self, ataque, defensa, speat, spedf, velocidad): # stat_boost_nerf
-        """Nerfea todos los atributos en los que recibe True"""
-        if ataque:
-            self.ataque = self.ataque // 2
-        if defensa:
-            self.defensa = self.defensa // 2
-        if speat:
-            self.speat = self.speat // 2
-        if spedf:
-            self.spedf = self.spedf // 2
-        if velocidad:
-            self.velocidad = self.velocidad // 2
-
-    def limpiar_stat_boost(self):
+    def hacer_dano(self, defensor, movimiento):
         """
-        Devuelve los atributos de ataque, defensa y velocidad 
-        a los que están en pokemons.csv para limpiar cualquier stat boost que pudo haber sido aplicado.
+        Hiere al pokemon que recibe el ataque.
         """
-        stats = lectores.lector_por_numero(self.numero, ARCHIVO_POKEMONES)
-        self.ataque = int(stats['atk'])
-        self.defensa = int(stats['def'])
-        self.speat = int(stats['spa'])
-        self.spedf = int(stats['spd'])
-        self.velocidad = int(stats['spe'])
+        ataque = self.ataque
+        defensa = defensor.defensa
+        diccionario_efectividades = lectores.detalles_tipos(self.tipos, ARCHIVO_TABLA_TIPOS)
+        roll = random.randint(80, 101)
+        efectividad = int(diccionario_efectividades[defensor.tipos])
 
-    def curar(self, nueva_hp):
-        """Cambia la salud del pokemon por la ingresada.""" # HACER_DAÑO
-        self.hp = nueva_hp
+        if efectividad == 2:
+            gamelib.say('Its super effective!')
+        elif efectividad == 0.5:
+            gamelib.say('Its not very effective.')
+        elif efectividad == 1:
+            gamelib.say('Its normal!')
 
-    def herir(self, nueva_hp):
-        """Cambia la salud del pokemon por la ingresada.""" # SANARSE
-        self.hp = nueva_hp
+        if movimiento.categoria == 'Special':
+            ataque = self.speat
+            defensa = defensor.spedf
 
-    def informacion(self):
-        """Retorna todos los atributos del pokemon en juego."""
-        return self.numero, self.imagen, self.nombre, self.tipos, self.hp, self.ataque, self.defensa, self.speat, self.spedf, self.velocidad, self.movimientos
+        dano = 15 * movimiento.poder * (ataque // defensa) // 50
 
+        if self.tipos == movimiento.tipo:
+            dano *= 1.5
+
+        defensor.hp = defensor.hp - (dano * efectividad * (roll // 100))
+
+    """
     def calculadora_daño(self, combatiendedefiende , movimiento):
-        """
-        Hace todos los calculos de daño, retorna el numero de daño hecho.
-        """
         tipo_atacante = self.tipos
         tipo_defensor = combatiendedefiende.tipos
         ataque_simple= self.ataque
@@ -129,18 +107,68 @@ class ClasePokemon:
         resultado = (combatiendedefiende.hp - damage) * roll / 100
 
         combatiendedefiende.hp =- resultado
+    """
 
-    def calculadora_sanacion(self):
-        """
-        Al ser llamada, calcula cuánto debe ser sanado un pokemon.
-        """
-        info = self.informacion()
-        max_hp_posible = int((lectores.lector_por_numero(int(info[0]), ARCHIVO_POKEMONES))[4]) + 110
-        resultado = self.hp + max_hp_posible // 2
-        if resultado > max_hp_posible:
-            resultado = max_hp_posible
+    def stat_boost(self, ataque, defensa, speat, spedf, velocidad): # stat_boost_nerf
+        """Boostea todos los atributos en los que recibe True"""
+        if ataque:
+            self.ataque = self.ataque * 2
+        if defensa:
+            self.defensa = self.defensa * 2
+        if speat:
+            self.speat = self.speat * 2
+        if spedf:
+            self.spedf = self.spedf * 2
+        if velocidad:
+            self.velocidad = self.velocidad * 2
 
-        self.hp = resultado
+    def stat_nerf(self, ataque, defensa, speat, spedf, velocidad): # stat_boost_nerf
+        """Nerfea todos los atributos en los que recibe True"""
+        if ataque:
+            self.ataque = self.ataque // 2
+        if defensa:
+            self.defensa = self.defensa // 2
+        if speat:
+            self.speat = self.speat // 2
+        if spedf:
+            self.spedf = self.spedf // 2
+        if velocidad:
+            self.velocidad = self.velocidad // 2
+
+    def sanarse(self):
+        """
+        Al ser llamada, cura al pokemon.
+        """
+        self.hp += self.hpmax // 2
+        if self.hp > self.hpmax:
+            self.hp = self.hpmax
+
+    def limpiar_stat_boost(self):
+        """
+        Devuelve los atributos de ataque, defensa y velocidad 
+        a los que están en pokemons.csv para limpiar cualquier stat boost que pudo haber sido aplicado.
+        """
+        stats = lectores.lector_por_numero(self.numero, ARCHIVO_POKEMONES)
+        self.ataque = int(stats['atk'])
+        self.defensa = int(stats['def'])
+        self.speat = int(stats['spa'])
+        self.spedf = int(stats['spd'])
+        self.velocidad = int(stats['spe'])
+
+    def herir(self, nueva_hp):
+        """Cambia la salud del pokemon por la ingresada.""" # SANARSE
+        self.hp = nueva_hp
+
+
+class ClaseMovimiento:
+    def __init__(self, nombre_movimiento):
+        diccionario_info = lectores.lector_por_nombre(nombre_movimiento, ARCHIVO_DETALLE_MOVIMIENTOS)
+        self.nombre = diccionario_info['nombre']
+        self.categoria = diccionario_info['categoria']
+        self.objetivo = diccionario_info['objetivo']
+        self.poder = int(diccionario_info['poder'])
+        self.tipo = diccionario_info['tipo']
+        self.stats = diccionario_info['stats']
 
 
 def numero_a_nombre(nro):
@@ -228,14 +256,12 @@ def quien_primero(combatiente1, combatiente2):
     Si las velocidades son iguales, elige aleatoriamente.
     Retorna el entero del combatiente.
     """
-    info1 = combatiente1.informacion()
-    info2 = combatiente2.informacion()
     if combatiente1.velocidad > combatiente2.velocidad:
         return 1
     elif combatiente1.velocidad < combatiente2.velocidad:
         return 2
     elif combatiente1.velocidad == combatiente2.velocidad:
-        aleatorio = random.choice(1, 2)
+        aleatorio = random.choice((1, 2))
         return aleatorio
     else: raise Exception ('Error en función quien_primero()')
 
@@ -246,19 +272,18 @@ def calcular_movimiento(movimiento, combatienteactua, combatientedefiende):
     y define a qué calculadora se debe llamar según si el movimiento es de tipo
     ataque, stat boost o sanación.
     """
-    informacion = lectores.lector_por_nombre(movimiento, ARCHIVO_DETALLE_MOVIMIENTOS)
-    if informacion['categoria'] == 'Special' or  informacion['categoria'] == 'Physical':
+    if movimiento.categoria == 'Special' or  movimiento.categoria == 'Physical':
         #combatientedefiende.herir(combatientedefiende.hp - 20) # DEBUG
-        combatienteactua.hacer_daño(combatientedefiende, movimiento)    #### NUEVO HCER
+        combatienteactua.hacer_dano(combatientedefiende, movimiento)    #### NUEVO HCER
 
-    elif informacion['categoria'] == 'Status' and informacion['objetivo'] == 'self' and informacion['stats'] == '':
-        combatienteactua.sanarse()  #### NUEVO HACER
+    elif movimiento.categoria == 'Status' and movimiento.objetivo == 'self' and movimiento.stats == '':
+        combatienteactua.sanarse() 
 
-    elif informacion['categoria'] == 'Status':
+    elif movimiento.categoria == 'Status':
         combatienteactua.stat_boost_nerf(movimiento, combatientedefiende)   
 
     else:
-        raise Exception('Error en calcular movimientos')
+        raise Exception('Error en calcular el tipo de movimiento.')
 
 
 def color_barra(porcentaje):
@@ -350,8 +375,8 @@ def un_turno(combatiente1, combatiente2, equipo1, equipo2):
     Calcula quien mueve primero y luego llama a las funciones calculadoras de daño, efecto y sanacion.
     """
     dibujar_combate(combatiente1, combatiente2, equipo1, equipo2) 
-    movimiento_jug_1 = jugador_elige_movimiento(combatiente1)
-    movimiento_jug_2 = jugador_elige_movimiento(combatiente2)
+    movimiento_jug_1 = ClaseMovimiento(jugador_elige_movimiento(combatiente1))
+    movimiento_jug_2 = ClaseMovimiento(jugador_elige_movimiento(combatiente2))
     mas_rapido = quien_primero(combatiente1, combatiente2)
 
     if mas_rapido == 1:
@@ -360,6 +385,7 @@ def un_turno(combatiente1, combatiente2, equipo1, equipo2):
             dibujar_combate(combatiente1, combatiente2, equipo1, equipo2)
             return
         calcular_movimiento(movimiento_jug_2, combatiente2, combatiente1)
+
     if mas_rapido == 2:
         calcular_movimiento(movimiento_jug_2, combatiente2, combatiente1)
         if not combatiente1.esta_vivo(): 
@@ -379,7 +405,6 @@ def desarrollo_combate(equipo1, equipo2):
 
     while not len(equipo1.pokmov) == 0 and not len(equipo2.pokmov) == 0:
         un_turno(combatiente1, combatiente2, equipo1, equipo2)
-        contador_turno += 1
 
         if not combatiente1.esta_vivo():
             equipo1.eliminar_pokemon_derrotado(combatiente1)

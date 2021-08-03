@@ -45,13 +45,13 @@ def pokemon_y_movimiento_a_tuplas(equipo):
     return resultado
 
 
-def detalles_tipos(tipo, archivo):
+def detalles_tipos(tipo, archivo, delimitador=';'):
     """
     Lee el archivo ingresado por parámetro y retorna la linea que tiene el nombre buscado en su columna 'Types'.
     La linea es retornada en forma de diccionario con los encabezados como llaves.
     """
     with open(archivo) as archivo:
-        reader = csv.DictReader(archivo)
+        reader = csv.DictReader(archivo, delimiter=delimitador)
 
         for linea in reader:
             if linea['Types'] == tipo:

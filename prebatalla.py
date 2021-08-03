@@ -68,7 +68,7 @@ def menu_principio():
     gamelib.draw_text('COMENZAR', TEXTO_CENTRO_X, TEXTO_CENTRO_Y, fill='black', size=25, anchor='c')  # TEXTO "POKEMONES"
     gamelib.draw_end()
 
-    return 'menu_principio', '', '', '', ''
+    return 'menu_principio', None, None, None, None
 
 
 def menu_archivos(ARCHIVO1, ARCHIVO2, EQUIPO1, EQUIPO2):
@@ -81,8 +81,8 @@ def menu_archivos(ARCHIVO1, ARCHIVO2, EQUIPO1, EQUIPO2):
     BE2X1, BE2Y1, BE2X2, BE2Y2 = BOTON_EQUIPO2_X1, BOTON_EQUIPO2_Y1, BOTON_EQUIPO2_X2, BOTON_EQUIPO2_Y2
     TEXTO_NOMBRE_1 = ''
     TEXTO_NOMBRE_2 = ''
-    if not EQUIPO1 == '': TEXTO_NOMBRE_1 = EQUIPO1['equipo_nombre']
-    if not EQUIPO2 == '': TEXTO_NOMBRE_2 = EQUIPO2['equipo_nombre']
+    if not EQUIPO1 == None: TEXTO_NOMBRE_1 = EQUIPO1['equipo_nombre']
+    if not EQUIPO2 == None: TEXTO_NOMBRE_2 = EQUIPO2['equipo_nombre']
 
     gamelib.draw_begin()
     gamelib.draw_rectangle(VACIO, VACIO, ANCHO_VENTANA, ALTO_VENTANA)  # FONDO BLANCO
@@ -165,17 +165,17 @@ def botones_seleccion_archivos(x, y, ARCHIVO1, ARCHIVO2, EQUIPO1, EQUIPO2):
         ARCHIVO2 = recibir_archivo_jugador()
 
     elif BE1X1 < x < BE1X2 and BE1Y1 < y < BE1Y2:
-        if ARCHIVO1 == '':
+        if ARCHIVO1 == None:
             gamelib.say(MENSAJE_ERROR_NECESITO_ARCHIVO) 
         else: EQUIPO1 = recibir_equipo_jugador(ARCHIVO1)
 
     elif BE2X1 < x < BE2X2 and BE2Y1 < y < BE2Y2:
-        if ARCHIVO2 == '':
+        if ARCHIVO2 == None:
             gamelib.say(MENSAJE_ERROR_NECESITO_ARCHIVO) 
         else: EQUIPO2 = recibir_equipo_jugador(ARCHIVO2)
 
     elif SHOW_X1 < x < SHOW_X2 and SHOW_Y1 < y < SHOW_Y2:
-        if not EQUIPO1 == '' and not EQUIPO2 == '':
+        if not EQUIPO1 == None and not EQUIPO2 == None:
             OBJ_EQUIPO1 = ClaseEquipo(EQUIPO1)
             OBJ_EQUIPO2 = ClaseEquipo(EQUIPO2)
             return "batalla", OBJ_EQUIPO1, OBJ_EQUIPO2 
