@@ -128,7 +128,7 @@ def recibir_archivo_jugador():
     while not os.path.exists(ingreso):
         ingreso = gamelib.input(MENSAJE_INGRESE_RUTA)
         if ingreso == None:
-            return ''
+            return None
         if os.path.exists(ingreso):
             return ingreso
         gamelib.say(MENSAJE_ERROR_RUTA)
@@ -142,9 +142,7 @@ def recibir_equipo_jugador(ARCHIVO):
     while True:
         intento = gamelib.input(MENSAJE_INGRESE_NRO_EQUIPO)
         if intento == None:
-            return ''
-        if not intento.isdigit():
-            continue
+            return None
 
         busqueda = lectores.lector_por_numero(int(intento), ARCHIVO)
         if busqueda == None:
