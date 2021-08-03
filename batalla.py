@@ -13,6 +13,8 @@ MENSAJE_ELIJA_PROX_COMBATIENTE = 'Ingrese el número del pokemon que luchará a 
 MENSAJE_ERROR_ELECCION_PROX_COMBATIENTE = 'No eligió correctamente su pŕoximo combatiente. Inténtalo de nuevo'
 MENSAJE_ELIJA_MOVIMIENTO = 'Elija que movimiento usará {} en este turno. Tienes disponibles: {}'
 MENSAJE_ERROR_ELECCION_MOVIMIENTO = 'No eligió correctamente su pŕoximo movmiento. Inténtalo de nuevo'
+MENSAJE_MUY_EFECTIVO = 'El ataque de {} a {} es muy efectivo!'
+MENSAJE_POCO_EFECTIVO = 'El ataque de {} a {} es poco efectivo.'
 
 
 class ClasePokemon:
@@ -35,7 +37,7 @@ class ClasePokemon:
         self.movimientos = par[1]
 
     def __str__(self):
-        return self.numero, self.imagen, self.nombre, self.tipos, self.hp, self.ataque, self.defensa, self.speat, self.spedf, self.velocidad, self.movimientos
+        return '{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}'.format(self.numero, self.imagen, self.nombre, self.tipos, self.hp, self.ataque, self.defensa, self.speat, self.spedf, self.velocidad, self.movimientos)
 
     def esta_vivo(self):
         """Retorna True o False si el pokemón está vivo (si su salud está por encima de 0)."""
@@ -50,64 +52,24 @@ class ClasePokemon:
         ataque = self.ataque
         defensa = defensor.defensa
         diccionario_efectividades = lectores.detalles_tipos(self.tipos, ARCHIVO_TABLA_TIPOS)
-        roll = random.randint(80, 101)
-        efectividad = int(diccionario_efectividades[defensor.tipos])
-
-        if efectividad == 2:
-            gamelib.say('Its super effective!')
-        elif efectividad == 0.5:
-            gamelib.say('Its not very effective.')
-        elif efectividad == 1:
-            gamelib.say('Its normal!')
+        roll = random.randint(80, 100)
+        efectividad = float(diccionario_efectividades[defensor.tipos])
 
         if movimiento.categoria == 'Special':
             ataque = self.speat
             defensa = defensor.spedf
 
-        dano = 15 * movimiento.poder * (ataque // defensa) // 50
+        if efectividad == 2:
+            gamelib.say(MENSAJE_MUY_EFECTIVO.format(self.nombre, defensor.nombre))
+        elif efectividad == 0.5:
+            gamelib.say(MENSAJE_POCO_EFECTIVO.format(self.nombre, defensor.nombre))
+
+        dano = 15 * movimiento.poder * (ataque / defensa) / 50
 
         if self.tipos == movimiento.tipo:
             dano *= 1.5
 
-        defensor.hp = defensor.hp - (dano * efectividad * (roll // 100))
-
-    """
-    def calculadora_daño(self, combatiendedefiende , movimiento):
-        tipo_atacante = self.tipos
-        tipo_defensor = combatiendedefiende.tipos
-        ataque_simple= self.ataque
-        SpAtaque_atacante = self.speat
-        defensa_simple = self.defensa
-        SpDefensa_defensor = combatiendedefiende.spedf
-
-        special_or_not_atk = {}
-        special_or_not_dfe = {}
-        special_or_not_atk["damage"] = ataque_simple
-        special_or_not_dfe["defensa"] = defensa_simple
-        stab = {"multiplicador": 1}
-
-        poder_base_del_ataque = int(lectores.lector_por_nombre(movimiento, ARCHIVO_DETALLE_MOVIMIENTOS)["poder"]) 
-        type_movement = lectores.lector_por_nombre(movimiento, ARCHIVO_DETALLE_MOVIMIENTOS)["categoria"]
-        efectividad_values = lectores.detalles_tipos(tipo_atacante, ARCHIVO_TABLA_TIPOS)
-        efectividad = int(efectividad_values[tipo_defensor])
-    
-        if type_movement == "Special":
-            special_or_not_atk["damage"] = SpAtaque_atacante
-            special_or_not_dfe["defensa"] = SpDefensa_defensor
-        elif type_movement == "Physical":
-            special_or_not_atk["damage"] = ataque_simple
-            special_or_not_dfe["defensa"] = defensa_simple
-    
-        if type_movement == tipo_atacante:
-            stab["multiplicador": 1.5]
-
-        base_damage = 15 * poder_base_del_ataque * (special_or_not_atk["damage"] / special_or_not_dfe["defensa"] / 50)
-        damage = base_damage * stab["multiplicador"] * efectividad
-        roll = random.randint(80, 101)
-        resultado = (combatiendedefiende.hp - damage) * roll / 100
-
-        combatiendedefiende.hp =- resultado
-    """
+        defensor.hp -= int(dano * efectividad * (roll / 100))
 
     def stat_boost(self, ataque, defensa, speat, spedf, velocidad): # stat_boost_nerf
         """Boostea todos los atributos en los que recibe True"""
@@ -155,10 +117,6 @@ class ClasePokemon:
         self.spedf = int(stats['spd'])
         self.velocidad = int(stats['spe'])
 
-    def herir(self, nueva_hp):
-        """Cambia la salud del pokemon por la ingresada.""" # SANARSE
-        self.hp = nueva_hp
-
 
 class ClaseMovimiento:
     def __init__(self, nombre_movimiento):
@@ -169,6 +127,9 @@ class ClaseMovimiento:
         self.poder = int(diccionario_info['poder'])
         self.tipo = diccionario_info['tipo']
         self.stats = diccionario_info['stats']
+
+    def __str__(self):
+        return '{}-{}-{}-{}-{}-{}'.format(self.nombre, self.categoria, self.objetivo, self.poder, self.tipo, self.stats)
 
 
 def numero_a_nombre(nro):
@@ -273,8 +234,7 @@ def calcular_movimiento(movimiento, combatienteactua, combatientedefiende):
     ataque, stat boost o sanación.
     """
     if movimiento.categoria == 'Special' or  movimiento.categoria == 'Physical':
-        #combatientedefiende.herir(combatientedefiende.hp - 20) # DEBUG
-        combatienteactua.hacer_dano(combatientedefiende, movimiento)    #### NUEVO HCER
+        combatienteactua.hacer_dano(combatientedefiende, movimiento)
 
     elif movimiento.categoria == 'Status' and movimiento.objetivo == 'self' and movimiento.stats == '':
         combatienteactua.sanarse() 
@@ -401,7 +361,6 @@ def desarrollo_combate(equipo1, equipo2):
     """
     combatiente1 = ClasePokemon(jugador_elige_pokemon(equipo1)) 
     combatiente2 = ClasePokemon(jugador_elige_pokemon(equipo2))
-    contador_turno = 0
 
     while not len(equipo1.pokmov) == 0 and not len(equipo2.pokmov) == 0:
         un_turno(combatiente1, combatiente2, equipo1, equipo2)
@@ -427,3 +386,53 @@ def desarrollo_combate(equipo1, equipo2):
 
     elif len(equipo2.pokmov) == 0:
         gamelib.say('Felicidades, ganó el jugador 1!')
+
+    return 
+
+"""def un_turno(combatiente1, combatiente2, equipo1, equipo2): 
+    dibujar_combate(combatiente1, combatiente2, equipo1, equipo2) 
+    movimiento_jug_1 = ClaseMovimiento(jugador_elige_movimiento(combatiente1))
+    movimiento_jug_2 = ClaseMovimiento(jugador_elige_movimiento(combatiente2))
+    mas_rapido = quien_primero(combatiente1, combatiente2)
+
+    if mas_rapido == 1:
+        calcular_movimiento(movimiento_jug_1, combatiente1, combatiente2)
+        if not combatiente2.esta_vivo(): 
+            #dibujar_combate(combatiente1, combatiente2, equipo1, equipo2)
+            return
+        calcular_movimiento(movimiento_jug_2, combatiente2, combatiente1)
+
+    if mas_rapido == 2:
+        calcular_movimiento(movimiento_jug_2, combatiente2, combatiente1)
+        if not combatiente1.esta_vivo(): 
+            #dibujar_combate(combatiente1, combatiente2, equipo1, equipo2)
+            return 
+        calcular_movimiento(movimiento_jug_1, combatiente1, combatiente2)
+
+    desarrollo_combate(equipo1, equipo2, combatiente1, combatiente2)
+
+
+def desarrollo_combate(equipo1, equipo2, combatiente1=None, combatiente2=None):
+    if combatiente1 == None:
+        combatiente1 = ClasePokemon(jugador_elige_pokemon(equipo1)) 
+    if combatiente2 == None:
+        combatiente2 = ClasePokemon(jugador_elige_pokemon(equipo2))
+
+    if not combatiente1.esta_vivo():
+        equipo1.eliminar_pokemon_derrotado(combatiente1)
+        if len(equipo1.pokmov) == 0:
+            gamelib.say('Felicidades, ganó el jugador 2!')
+            return
+        combatiente1 = ClasePokemon(jugador_elige_pokemon(equipo1))
+        combatiente2.limpiar_stat_boost()
+
+    elif not combatiente2.esta_vivo():
+        equipo2.eliminar_pokemon_derrotado(combatiente2)
+        if len(equipo2.pokmov) == 0:
+            gamelib.say('Felicidades, ganó el jugador 1!')
+            return
+        combatiente2 = ClasePokemon(jugador_elige_pokemon(equipo2))
+        combatiente1.limpiar_stat_boost()
+
+    un_turno(combatiente1, combatiente2, equipo1, equipo2)
+"""
