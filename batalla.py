@@ -1,6 +1,7 @@
 import lectores
 import gamelib
 import random
+import auxiliares
 
 ANCHO_VENTANA = 900
 ALTO_VENTANA = 600
@@ -19,10 +20,10 @@ MENSAJE_POCO_EFECTIVO = 'El ataque de {} a {} es poco efectivo.'
 
 class ClasePokemon:
     def __init__(self, par):
-        """Crea por primera vez un combatiente, recibiendo su número y sus movimientos disponibles.""" 
+        """Crea al pokemon en juego, recibiendo su número y sus movimientos disponibles en una tupla.""" 
         stats = lectores.lector_por_numero(par[0], ARCHIVO_POKEMONES)
         lista_tipos = (stats['tipos']).split(',')
-
+        
         self.numero = par[0]
         self.imagen = stats['imagen']
         self.nombre = stats['nombre']
@@ -37,6 +38,7 @@ class ClasePokemon:
         self.movimientos = par[1]
 
     def __str__(self):
+        """Retorna un string para imprimir el pokemon. Para uso de debugging exclusivamente"""
         return '{}-{}-{}-{}-{}-{}-{}-{}-{}-{}-{}'.format(self.numero, self.imagen, self.nombre, self.tipos, self.hp, self.ataque, self.defensa, self.speat, self.spedf, self.velocidad, self.movimientos)
 
     def esta_vivo(self):
@@ -47,7 +49,8 @@ class ClasePokemon:
 
     def hacer_dano(self, defensor, movimiento):
         """
-        Hiere al pokemon que recibe el ataque.
+        Hace daño al pokemon que recibe el ataque.
+        El moviento y el pokemon que recibe el ataque son ingresados por parámetro.
         """
         ataque = self.ataque
         defensa = defensor.defensa
@@ -71,7 +74,7 @@ class ClasePokemon:
 
         defensor.hp -= int(dano * efectividad * (roll / 100))
 
-    def stat_boost(self, ataque, defensa, speat, spedf, velocidad): # stat_boost_nerf
+    def stat_boost(self, ataque, defensa, speat, spedf, velocidad):
         """Boostea todos los atributos en los que recibe True"""
         if ataque:
             self.ataque = self.ataque * 2
@@ -84,7 +87,7 @@ class ClasePokemon:
         if velocidad:
             self.velocidad = self.velocidad * 2
 
-    def stat_nerf(self, ataque, defensa, speat, spedf, velocidad): # stat_boost_nerf
+    def stat_nerf(self, ataque, defensa, speat, spedf, velocidad): 
         """Nerfea todos los atributos en los que recibe True"""
         if ataque:
             self.ataque = self.ataque // 2
@@ -98,9 +101,7 @@ class ClasePokemon:
             self.velocidad = self.velocidad // 2
 
     def sanarse(self):
-        """
-        Al ser llamada, cura al pokemon.
-        """
+        """Al ser llamada, cura al pokemon."""
         self.hp += self.hpmax // 2
         if self.hp > self.hpmax:
             self.hp = self.hpmax
@@ -121,6 +122,10 @@ class ClasePokemon:
 class ClaseMovimiento:
     def __init__(self, nombre_movimiento):
         diccionario_info = lectores.lector_por_nombre(nombre_movimiento, ARCHIVO_DETALLE_MOVIMIENTOS)
+        self.no_modelado = False
+        if diccionario_info == None:
+            self.no_modelado = True
+            return
         self.nombre = diccionario_info['nombre']
         self.categoria = diccionario_info['categoria']
         self.objetivo = diccionario_info['objetivo']
@@ -188,9 +193,9 @@ def elegir_boost_o_nerf(movimiento, combatienteactua, combatientedefiende):
             if elemento == 'def':
                 combatienteactua.stat_boost(False, True, False, False, False)
             if elemento == 'speat':
-                combatienteactua.stat_boost(False, False, True, False, False)  # Los stat_boost de Special Attack  no existen, pero si se quisiese implementar es posible con estas lineas
+                combatienteactua.stat_boost(False, False, True, False, False) 
             if elemento == 'spedf':
-                combatienteactua.stat_boost(False, False, False, True, False)  # Los stat_boost de Special Defense no existen, pero si se quisiese implementar es posible con estas lineas
+                combatienteactua.stat_boost(False, False, False, True, False) 
             if elemento == 'spe':
                 combatienteactua.stat_boost(False, False, False, False, True)
 
@@ -201,9 +206,9 @@ def elegir_boost_o_nerf(movimiento, combatienteactua, combatientedefiende):
             if elemento == 'def':
                 combatientedefiende.stat_nerf(False, True, False, False, False)
             if elemento == 'speat':
-                combatientedefiende.stat_nerf(False, False, True, False, False)  # Los stat_nerf de Special Attack  no existen, pero si se quisiese implementar es posible con estas lineas
+                combatientedefiende.stat_nerf(False, False, True, False, False)  
             if elemento == 'spedf':
-                combatientedefiende.stat_nerf(False, False, False, True, False)  # Los stat_nerf de Special Defense no existen, pero si se quisiese implementar es posible con estas lineas
+                combatientedefiende.stat_nerf(False, False, False, True, False) 
             if elemento == 'spe':
                 combatientedefiende.stat_nerf(False, False, False, False, True)
 
@@ -243,20 +248,6 @@ def calcular_movimiento(movimiento, combatienteactua, combatientedefiende):
         raise Exception('Error en calcular el tipo de movimiento.')
 
 
-def color_barra(porcentaje):
-    """Cambia el color de la barra de salud"""
-    if porcentaje >= 0.8:
-        color = 'green'
-
-    if 0.3 < porcentaje < 0.8:
-        color = 'orange'
-        
-    if porcentaje <= 0.3:
-        color = 'red'
-    
-    return color
-
-
 def dibujar_combate(combatiente1, combatiente2, equipo_1, equipo_2): 
     """
     Dibuja el estado del combate al principio del turno, para que los usuarios puedan elegir que hacer a continuación según
@@ -282,8 +273,8 @@ def dibujar_combate(combatiente1, combatiente2, equipo_1, equipo_2):
         hp_pocentaje_1 = 0.0
     if hp_pocentaje_2 < 0.0:
         hp_pocentaje_2 = 0.0
-    color_1 = color_barra(hp_pocentaje_1)
-    color_2 = color_barra(hp_pocentaje_2)
+    color_1 = auxiliares.color_barra(hp_pocentaje_1)
+    color_2 = auxiliares.color_barra(hp_pocentaje_2)
     TEXTO_MOSTRAR_STATS = '{} {}, Tipo: {}, HP: {}, Ataque: {}, Defensa: {}, S-Ataque:{}, S-Defensa: {}, Velocidad: {}'
     TEXTO_MOSTRAR_STATS_1 = TEXTO_MOSTRAR_STATS.format(combatiente1.nombre, combatiente1.numero, combatiente1.tipos, combatiente1.hp, combatiente1.ataque, combatiente1.defensa, combatiente1.speat, combatiente1.spedf, combatiente1.velocidad)
     TEXTO_MOSTRAR_STATS_2 = TEXTO_MOSTRAR_STATS.format(combatiente2.nombre, combatiente2.numero, combatiente2.tipos, combatiente2.hp, combatiente2.ataque, combatiente2.defensa, combatiente2.speat, combatiente2.spedf, combatiente2.velocidad)
@@ -336,6 +327,10 @@ def un_turno(combatiente1, combatiente2, equipo1, equipo2):
     movimiento_jug_2 = ClaseMovimiento(jugador_elige_movimiento(combatiente2))
     mas_rapido = quien_primero(combatiente1, combatiente2)
 
+    if movimiento_jug_1.no_modelado or movimiento_jug_2.no_modelado:
+        gamelib.say('Uno de los movimientos elegidos no está modelado en el juego.')
+        return 
+
     if mas_rapido == 1:
         calcular_movimiento(movimiento_jug_1, combatiente1, combatiente2)
         if not combatiente2.esta_vivo(): 
@@ -385,51 +380,3 @@ def desarrollo_combate(equipo1, equipo2):
         gamelib.say('Felicidades, ganó el jugador 1!')
 
     return 
-
-"""def un_turno(combatiente1, combatiente2, equipo1, equipo2): 
-    dibujar_combate(combatiente1, combatiente2, equipo1, equipo2) 
-    movimiento_jug_1 = ClaseMovimiento(jugador_elige_movimiento(combatiente1))
-    movimiento_jug_2 = ClaseMovimiento(jugador_elige_movimiento(combatiente2))
-    mas_rapido = quien_primero(combatiente1, combatiente2)
-
-    if mas_rapido == 1:
-        calcular_movimiento(movimiento_jug_1, combatiente1, combatiente2)
-        if not combatiente2.esta_vivo(): 
-            #dibujar_combate(combatiente1, combatiente2, equipo1, equipo2)
-            return
-        calcular_movimiento(movimiento_jug_2, combatiente2, combatiente1)
-
-    if mas_rapido == 2:
-        calcular_movimiento(movimiento_jug_2, combatiente2, combatiente1)
-        if not combatiente1.esta_vivo(): 
-            #dibujar_combate(combatiente1, combatiente2, equipo1, equipo2)
-            return 
-        calcular_movimiento(movimiento_jug_1, combatiente1, combatiente2)
-
-    desarrollo_combate(equipo1, equipo2, combatiente1, combatiente2)
-
-
-def desarrollo_combate(equipo1, equipo2, combatiente1=None, combatiente2=None):
-    if combatiente1 == None:
-        combatiente1 = ClasePokemon(jugador_elige_pokemon(equipo1)) 
-    if combatiente2 == None:
-        combatiente2 = ClasePokemon(jugador_elige_pokemon(equipo2))
-
-    if not combatiente1.esta_vivo():
-        equipo1.eliminar_pokemon_derrotado(combatiente1)
-        if len(equipo1.pokmov) == 0:
-            gamelib.say('Felicidades, ganó el jugador 2!')
-            return
-        combatiente1 = ClasePokemon(jugador_elige_pokemon(equipo1))
-        combatiente2.limpiar_stat_boost()
-
-    elif not combatiente2.esta_vivo():
-        equipo2.eliminar_pokemon_derrotado(combatiente2)
-        if len(equipo2.pokmov) == 0:
-            gamelib.say('Felicidades, ganó el jugador 1!')
-            return
-        combatiente2 = ClasePokemon(jugador_elige_pokemon(equipo2))
-        combatiente1.limpiar_stat_boost()
-
-    un_turno(combatiente1, combatiente2, equipo1, equipo2)
-"""

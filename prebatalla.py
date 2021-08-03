@@ -37,14 +37,17 @@ SHOW_X1, SHOW_Y1, SHOW_X2, SHOW_Y2 = MITAD_X - BOTON_X, BOTON_FIN_ARCHIVOS_Y - B
 
 class ClaseEquipo():
     def __init__(self, diccionario):
+        """Inicia un Equipo con un diccionario de atributos. La lista de pokemones vivos se guardan en una tupla junto a sus movimientos"""
         self.numero = diccionario['numero']
         self.nombre = diccionario['equipo_nombre']
         self.pokmov = lectores.pokemon_y_movimiento_a_tuplas(diccionario)
 
     def __str__(self):
+        """Función exclusivamente para debugging. Retornna un string para imprimir."""
         return 'Equipo número {}. Nombre {}. Pares de pokemones con sus movimientos {}'.format(self.numero, self.nombre, self.pokmov)
 
     def eliminar_pokemon_derrotado(self, derrotado):
+        """Recibe el número de un pokemon derrotado y elimina su tupla de la lista de pokemones vivos."""
         for par in self.pokmov:
             print (self.pokmov, par)
             if par[0] == derrotado.numero:
