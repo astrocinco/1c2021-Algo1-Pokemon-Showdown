@@ -126,7 +126,7 @@ class ClaseMovimiento:
         self.objetivo = diccionario_info['objetivo']
         self.poder = int(diccionario_info['poder'])
         self.tipo = diccionario_info['tipo']
-        self.stats = diccionario_info['stats']
+        self.stats = diccionario_info['stats'].split(';')
 
     def __str__(self):
         return '{}-{}-{}-{}-{}-{}'.format(self.nombre, self.categoria, self.objetivo, self.poder, self.tipo, self.stats)
@@ -177,15 +177,12 @@ def jugador_elige_movimiento(combatiente):
     return eleccion
 
 
-def calculadora_efecto(movimiento, combatienteactua, combatientedefiende):
+def elegir_boost_o_nerf(movimiento, combatienteactua, combatientedefiende):
     """
     Hace todos los calculos de stat boost, retorna los efectos.
     """
-    info_movimiento = lectores.lector_por_nombre(movimiento, ARCHIVO_DETALLE_MOVIMIENTOS)
-    stats_afectadas = info_movimiento['stats'].split(';')
-
-    if info_movimiento['objetivo'] == 'self':
-        for elemento in stats_afectadas:
+    if movimiento.objetivo == 'self':
+        for elemento in movimiento.stats:
             if elemento == 'atk':
                 combatienteactua.stat_boost(True, False, False, False, False)
             if elemento == 'def':
@@ -197,8 +194,8 @@ def calculadora_efecto(movimiento, combatienteactua, combatientedefiende):
             if elemento == 'spe':
                 combatienteactua.stat_boost(False, False, False, False, True)
 
-    if info_movimiento['objetivo'] == 'normal':
-        for elemento in stats_afectadas:
+    if movimiento.objetivo == 'normal':
+        for elemento in movimiento.stats:
             if elemento == 'atk':
                 combatientedefiende.stat_nerf(True, False, False, False, False)
             if elemento == 'def':
@@ -240,7 +237,7 @@ def calcular_movimiento(movimiento, combatienteactua, combatientedefiende):
         combatienteactua.sanarse() 
 
     elif movimiento.categoria == 'Status':
-        combatienteactua.stat_boost_nerf(movimiento, combatientedefiende)   
+        elegir_boost_o_nerf(movimiento, combatienteactua, combatientedefiende)
 
     else:
         raise Exception('Error en calcular el tipo de movimiento.')
