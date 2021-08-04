@@ -54,6 +54,10 @@ class ClasePokemon:
             gamelib.say(auxiliares.MENSAJE_MUY_EFECTIVO.format(self.nombre, defensor.nombre))
         elif efectividad == 0.5:
             gamelib.say(auxiliares.MENSAJE_POCO_EFECTIVO.format(self.nombre, defensor.nombre))
+        elif efectividad == 0:
+            gamelib.say(auxiliares.MENSAJE_NADA_EFECTIVO.format(self.nombre, defensor.nombre))
+        elif efectividad == 1:
+            gamelib.say(auxiliares.MENSAJE_NORMAL_EFECTIVO.format(self.nombre, defensor.nombre))
 
         dano = 15 * movimiento.poder * (ataque / defensa) / 50
 
@@ -63,30 +67,32 @@ class ClasePokemon:
         defensor.hp -= int(dano * efectividad * (roll / 100))
 
     def stat_boost(self, ataque, defensa, speat, spedf, velocidad):
-        """Boostea todos los atributos en los que recibe True"""
+        """Boostea todos los atributos en los que recibe True""" 
+        gamelib.say(auxiliares.MENSAJE_STAT_BOOST.format(self.nombre))
         if ataque:
-            self.ataque = self.ataque * 2
+            self.ataque *= 2
         if defensa:
-            self.defensa = self.defensa * 2
+            self.defensa *= 2
         if speat:
-            self.speat = self.speat * 2
+            self.speat *= 2
         if spedf:
-            self.spedf = self.spedf * 2
+            self.spedf *= 2
         if velocidad:
-            self.velocidad = self.velocidad * 2
+            self.velocidad *= 2
 
     def stat_nerf(self, ataque, defensa, speat, spedf, velocidad): 
         """Nerfea todos los atributos en los que recibe True"""
+        gamelib.say(auxiliares.MENSAJE_STAT_NERF.format(self.nombre))
         if ataque:
-            self.ataque = self.ataque // 2
+            self.ataque //= 2
         if defensa:
-            self.defensa = self.defensa // 2
+            self.defensa //= 2
         if speat:
-            self.speat = self.speat // 2
+            self.speat //=  2
         if spedf:
-            self.spedf = self.spedf // 2
+            self.spedf //= 2
         if velocidad:
-            self.velocidad = self.velocidad // 2
+            self.velocidad //= 2
 
     def limpiar_stat_boost(self):
         """
@@ -102,7 +108,8 @@ class ClasePokemon:
 
     def sanarse(self):
         """Al ser llamada, cura al pokemon."""
-        self.hp += self.hpmax // 2
+        gamelib.say(auxiliares.MENSAJE_CURACION.format(self.nombre))
+        self.hp += (self.hpmax // 2)
         if self.hp > self.hpmax:
             self.hp = self.hpmax
 
@@ -111,7 +118,7 @@ class ClaseMovimiento:
     def __init__(self, nombre_movimiento):
         diccionario_info = lectores.lector_por_nombre(nombre_movimiento, auxiliares.ARCHIVO_DETALLE_MOVIMIENTOS)
         self.no_modelado = False
-        if diccionario_info == None:
+        if not diccionario_info:
             self.no_modelado = True
             return
         self.nombre = diccionario_info['nombre']
@@ -125,9 +132,7 @@ class ClaseMovimiento:
         return '{}-{}-{}-{}-{}-{}'.format(self.nombre, self.categoria, self.objetivo, self.poder, self.tipo, self.stats)
 
     def elegir_boost_o_nerf(self, combatienteactua, combatientedefiende):
-        """
-        Hace todos los calculos de stat boost, retorna los efectos.
-        """
+        """Decide si un movimiento de modificación de stats es un nerf o un boost."""
         if self.objetivo == 'self':
             for elemento in self.stats:
                 if elemento == 'atk':
@@ -155,11 +160,7 @@ class ClaseMovimiento:
                     combatientedefiende.stat_nerf(False, False, False, False, True)
 
     def definir_ataque_stat_o_heal(self, combatienteactua, combatientedefiende):
-        """
-        Recibe el movimiento que se usará, y los dos objetos de los pokemones en juego
-        y define a qué calculadora se debe llamar según si el movimiento es de tipo
-        ataque, stat boost o sanación.
-        """
+        """Según el tipo del movimiento del objeto, decide qué tipo de método del objeto debe llamarse y con qué pokemones."""
         if self.categoria == 'Special' or  self.categoria == 'Physical':
             combatienteactua.hacer_dano(combatientedefiende, self)
 
@@ -280,12 +281,12 @@ def desarrollo_combate(equipo1, equipo2):
     combatiente1 = ClasePokemon(auxiliares.jugador_elige_pokemon(equipo1)) 
     combatiente2 = ClasePokemon(auxiliares.jugador_elige_pokemon(equipo2))
 
-    while not len(equipo1.pokmov) == 0 and not len(equipo2.pokmov) == 0:
+    while len(equipo1.pokmov) and len(equipo2.pokmov):
         un_turno(combatiente1, combatiente2, equipo1, equipo2)
 
         if not combatiente1.esta_vivo():
             equipo1.eliminar_pokemon_derrotado(combatiente1)
-            if len(equipo1.pokmov) == 0:
+            if not len(equipo1.pokmov):
                 break
 
             combatiente1 = ClasePokemon(auxiliares.jugador_elige_pokemon(equipo1))
@@ -293,16 +294,16 @@ def desarrollo_combate(equipo1, equipo2):
 
         elif not combatiente2.esta_vivo():
             equipo2.eliminar_pokemon_derrotado(combatiente2)
-            if len(equipo2.pokmov) == 0:
+            if not len(equipo2.pokmov):
                 break
 
             combatiente2 = ClasePokemon(auxiliares.jugador_elige_pokemon(equipo2))
             combatiente1.limpiar_stat_boost()
 
-    if len(equipo1.pokmov) == 0:
+    if not len(equipo1.pokmov):
         gamelib.say(auxiliares.GANO_JUGADOR_2)
 
-    elif len(equipo2.pokmov) == 0:
+    elif not len(equipo2.pokmov):
         gamelib.say(auxiliares.GANO_JUGADOR_1)
 
     return 

@@ -84,8 +84,8 @@ def menu_archivos(ARCHIVO1, ARCHIVO2, EQUIPO1, EQUIPO2):
     BE2X1, BE2Y1, BE2X2, BE2Y2 = BOTON_EQUIPO2_X1, BOTON_EQUIPO2_Y1, BOTON_EQUIPO2_X2, BOTON_EQUIPO2_Y2
     TEXTO_NOMBRE_1 = ''
     TEXTO_NOMBRE_2 = ''
-    if not EQUIPO1 == None: TEXTO_NOMBRE_1 = EQUIPO1['equipo_nombre']
-    if not EQUIPO2 == None: TEXTO_NOMBRE_2 = EQUIPO2['equipo_nombre']
+    if EQUIPO1: TEXTO_NOMBRE_1 = EQUIPO1['equipo_nombre']
+    if EQUIPO2: TEXTO_NOMBRE_2 = EQUIPO2['equipo_nombre']
 
     gamelib.draw_begin()
     gamelib.draw_rectangle(VACIO, VACIO, ANCHO_VENTANA, ALTO_VENTANA)  # FONDO BLANCO
@@ -114,7 +114,7 @@ def menu_archivos(ARCHIVO1, ARCHIVO2, EQUIPO1, EQUIPO2):
 def error():
     """Función para detectar errores en la navegacion"""
     gamelib.draw_begin()
-    gamelib.draw_text('lol no', MITAD_X, MITAD_Y, fill='red', size=30, anchor='s')  # TITULO
+    gamelib.draw_text('Error', MITAD_X, MITAD_Y, fill='red', size=30, anchor='s') 
     gamelib.draw_end()
 
 
@@ -127,7 +127,7 @@ def recibir_archivo_jugador():
 
     while not os.path.exists(ingreso):
         ingreso = gamelib.input(MENSAJE_INGRESE_RUTA)
-        if ingreso == None:
+        if not ingreso:
             return None
         if os.path.exists(ingreso):
             return ingreso
@@ -141,11 +141,11 @@ def recibir_equipo_jugador(ARCHIVO):
     """
     while True:
         intento = gamelib.input(MENSAJE_INGRESE_NRO_EQUIPO)
-        if intento == None:
+        if not intento:
             return None
 
         busqueda = lectores.lector_por_numero(int(intento), ARCHIVO)
-        if busqueda == None:
+        if not busqueda:
             gamelib.say(MENSAJE_ERROR_EQUIPO_INVALIDO)
             continue
         else: return busqueda
@@ -166,17 +166,17 @@ def botones_seleccion_archivos(x, y, ARCHIVO1, ARCHIVO2, EQUIPO1, EQUIPO2):
         ARCHIVO2 = recibir_archivo_jugador()
 
     elif BE1X1 < x < BE1X2 and BE1Y1 < y < BE1Y2:
-        if ARCHIVO1 == None:
+        if not ARCHIVO1:
             gamelib.say(MENSAJE_ERROR_NECESITO_ARCHIVO) 
         else: EQUIPO1 = recibir_equipo_jugador(ARCHIVO1)
 
     elif BE2X1 < x < BE2X2 and BE2Y1 < y < BE2Y2:
-        if ARCHIVO2 == None:
+        if not ARCHIVO2:
             gamelib.say(MENSAJE_ERROR_NECESITO_ARCHIVO) 
         else: EQUIPO2 = recibir_equipo_jugador(ARCHIVO2)
 
     elif SHOW_X1 < x < SHOW_X2 and SHOW_Y1 < y < SHOW_Y2:
-        if not EQUIPO1 == None and not EQUIPO2 == None:
+        if EQUIPO1 and EQUIPO2:
             OBJ_EQUIPO1 = ClaseEquipo(EQUIPO1)
             OBJ_EQUIPO2 = ClaseEquipo(EQUIPO2)
             return "batalla", OBJ_EQUIPO1, OBJ_EQUIPO2 
