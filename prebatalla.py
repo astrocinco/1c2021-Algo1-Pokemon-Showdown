@@ -49,7 +49,6 @@ class ClaseEquipo():
     def eliminar_pokemon_derrotado(self, derrotado):
         """Recibe el número de un pokemon derrotado y elimina su tupla de la lista de pokemones vivos."""
         for par in self.pokmov:
-            print (self.pokmov, par)
             if par[0] == derrotado.numero:
                 self.pokmov.remove(par)
 

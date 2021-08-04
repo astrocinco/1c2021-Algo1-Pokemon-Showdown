@@ -164,7 +164,7 @@ class ClaseMovimiento:
         if self.categoria == 'Special' or  self.categoria == 'Physical':
             combatienteactua.hacer_dano(combatientedefiende, self)
 
-        elif self.categoria == 'Status' and self.objetivo == 'self' and self.stats == '':
+        elif self.categoria == 'Status' and self.objetivo == 'self' and self.stats == ['']:
             combatienteactua.sanarse() 
 
         elif self.categoria == 'Status':
